@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/fleetbase-logo-svg.svg" width="380" height="100" />
+  <img src="assets/navigator-icon-transparent.png" width="140" height="140" />
 </p>
 <p align="center">
-Open source order managemenr, geolocation tracking & navigation app for Fleetbase drivers & agents.
+Open source order management, geolocation tracking & navigation app tailored for Blackstar drivers & agents.
 </p>
 
 <p align="center">
-  <a href="https://fleetbase.io">fleetbase.io</a> | <a href="https://twitter.com/fleetbase_io">@fleetbase_io</a> | <a href="https://discord.gg/fjP4sReEvH">Discord</a>
+  <a href="https://github.com/Blackmarket-coa/Blackstar">Blackstar Repository</a>
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@ Open source order managemenr, geolocation tracking & navigation app for Fleetbas
 
 ### About
 
-Fleetbase Navigator is an open source navigation and order management app for drivers and agents using Fleetbase. This app is fully customizable and supports QR code scanning, digital signatures, photos, and routing and navigation for agents. Drivers will be able to update activity to orders on the run as they complete job. Navigator app now includes fuel report and issue management and creation. Enable seamless communication with built in chat with operations personnel and customers.
+Blackstar Navigator is an open source navigation and order management app for drivers and agents. This app is fully customizable and supports QR code scanning, digital signatures, photos, and routing and navigation for agents. Drivers can update activity to orders on the run as they complete jobs. The app includes fuel report and issue management, plus built-in chat with operations personnel and customers.
 
 ### Prerequisites
 
@@ -47,13 +47,13 @@ Fleetbase Navigator is an open source navigation and order management app for dr
 
 ### Installation
 
-Installation and setup is fairly quick, all you need is your Fleetbase API Key, and a few commands and your app will be up and running in minutes. Follow the directions below to get started.
+Installation and setup is fairly quick, all you need is your API key and a few commands to get your app running in minutes. Follow the directions below to get started.
 
 Run the commands below; first clone the project, use npm or yarn to install the dependencies, then run `npx pod-install` to install the iOS dependencies. Lastly, create a `.env` file to configure the app.
 
 ```
-git clone git@github.com:fleetbase/navigator-app.git
-cd navigator-app
+git clone git@github.com:Blackmarket-coa/Blackstar.git
+cd Blackstar
 yarn
 yarn pod:install
 touch .env
@@ -64,19 +64,19 @@ touch .env
 Below is the steps needed to configure the environment. The first part covers collecting your required API keys.
 
 1.  Get your API Keys;
-2.  **If you don't have a Fleetbase account already** proceed to the [Fleetbase Console](https://console.fleetbase.io/) and click "Create an account", complete the registration form and you will be taken to the console.
+2.  If you don't already have an account for your backend instance, create one from your provider's console.
 3.  Once you're in the Fleetbase console select the "Developers" button in the top navigation. Next, select API Keys from the menu in the Developers section, and create a new API key. Copy your secret key generated, you'll need it later.
-4.  Once you have both required API keys open your `.env` file.
+4.  Once you have the required API keys, open your `.env` file.
 
-In your `.env` file supply your Fleetbase API secret key, and additionally you will need a Google Maps API Key. Lastly, you'll also need to supply your app/bundle identifier, and an `APP_NAME` key.
+In your `.env` file supply your API secret key, and additionally a Google Maps API key. Lastly, set your app/bundle identifier and an `APP_NAME` key.
 
 Your `.env` file should look something like this once you're done.
 
 ```
 # .env
-APP_NAME=Fleetbase Navigator
-APP_IDENTIFIER=io.fleetbase.navigator
-APP_LINK_PREFIX=navigator://
+APP_NAME=Blackstar Navigator
+APP_IDENTIFIER=com.blackmarket.blackstar
+APP_LINK_PREFIX=blackstar://
 FLEETBASE_HOST=https://api.fleetbase.io
 FLEETBASE_KEY=
 ```

@@ -1,9 +1,9 @@
 {
-    "name": "@fleetbase/navigator-app",
+    "name": "@blackmarket/blackstar-app",
     "version": "2.0.9",
     "license": "AGPL-3.0-or-later",
-    "author": "Fleetbase Pte Ltd <hello@fleetbase.io>",
-    "description": "Order management, geolocation tracking and navigation for Fleetbase drivers.",
+    "author": "Blackmarket",
+    "description": "Order management, geolocation tracking and navigation for Blackstar drivers.",
     "private": true,
     "scripts": {
         "android": "react-native run-android",
