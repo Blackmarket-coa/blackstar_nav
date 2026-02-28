@@ -1,0 +1,11 @@
+feature_name,required_for_launch,current_status,owner,target_release
+Driver authentication,yes,present,Mobile Team,v1.0
+Order lifecycle (accept/start/complete),yes,present,Dispatch Team,v1.0
+Route navigation and ETA,yes,partial,Mobile Team,v1.0
+Proof of delivery (signature/photo),yes,present,Ops Platform,v1.0
+Fuel reports,yes,present,Fleet Ops,v1.1
+Issue management,yes,present,Fleet Ops,v1.1
+In-app chat + notifications,yes,partial,Realtime Team,v1.0
+Fleet/vehicle profile and status,no,present,Fleet Ops,v1.2
+Instance linking via deep link,yes,present,Platform Team,v1.0
+Blackstar gateway runtime config,yes,present,Platform Team,v1.0

@@ -5,28 +5,28 @@ import useStorage from './use-storage';
 
 const useFleetbase = () => {
     const { resolveConnectionConfig } = useConfig();
-    const FLEETBASE_KEY = resolveConnectionConfig('FLEETBASE_KEY');
-    const FLEETBASE_HOST = resolveConnectionConfig('FLEETBASE_HOST');
+    const gatewayKey = resolveConnectionConfig('BLACKSTAR_GATEWAY_KEY');
+    const gatewayHost = resolveConnectionConfig('BLACKSTAR_GATEWAY_HOST');
 
     const [error, setError] = useState<Error | null>(null);
     const [authToken] = useStorage('_driver_token');
-    const [fleetbase, setFleetbase] = useState<Fleetbase | null>(new Fleetbase(authToken ?? FLEETBASE_KEY, { host: FLEETBASE_HOST }));
+    const [fleetbase, setFleetbase] = useState<Fleetbase | null>(new Fleetbase(authToken ?? gatewayKey, { host: gatewayHost }));
 
     const hasFleetbaseConfig = useCallback(() => {
-        const FLEETBASE_KEY = resolveConnectionConfig('FLEETBASE_KEY');
-        const FLEETBASE_HOST = resolveConnectionConfig('FLEETBASE_HOST');
+        const gatewayKey = resolveConnectionConfig('BLACKSTAR_GATEWAY_KEY');
+        const gatewayHost = resolveConnectionConfig('BLACKSTAR_GATEWAY_HOST');
 
-        return typeof FLEETBASE_KEY === 'string' && typeof FLEETBASE_HOST === 'string';
+        return typeof gatewayKey === 'string' && typeof gatewayHost === 'string';
     }, [resolveConnectionConfig]);
 
     useEffect(() => {
-        const FLEETBASE_HOST = resolveConnectionConfig('FLEETBASE_HOST');
-        const FLEETBASE_KEY = resolveConnectionConfig('FLEETBASE_KEY');
+        const gatewayHost = resolveConnectionConfig('BLACKSTAR_GATEWAY_HOST');
+        const gatewayKey = resolveConnectionConfig('BLACKSTAR_GATEWAY_KEY');
 
         try {
             // If authToken is present, initialize a new Fleetbase instance with it,
             // otherwise fall back to the default configuration.
-            const fleetbase = authToken ? new Fleetbase(authToken, { host: FLEETBASE_HOST }) : new Fleetbase(FLEETBASE_KEY, { host: FLEETBASE_HOST });
+            const fleetbase = authToken ? new Fleetbase(authToken, { host: gatewayHost }) : new Fleetbase(gatewayKey, { host: gatewayHost });
             setFleetbase(fleetbase);
         } catch (initializationError) {
             setError(initializationError as Error);

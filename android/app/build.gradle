@@ -82,7 +82,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
     
-    namespace "io.fleetbase.navigator"
+    namespace "com.blackmarket.blackstar"
     defaultConfig {
         applicationId project.env.get("APP_IDENTIFIER")
         minSdkVersion rootProject.ext.minSdkVersion
@@ -91,16 +91,16 @@ android {
         versionName project.env.get("ANDROID_VERSION_NAME") ?: "1.0.0"
         missingDimensionStrategy 'react-native-camera', 'general' 
         manifestPlaceholders = [
-            appLinkScheme: project.env.get("APP_LINK_PREFIX") ?: "flbnavigator"
+            appLinkScheme: project.env.get("APP_LINK_PREFIX") ?: "blackstar"
         ]
-        resValue "string", "build_config_package", "io.fleetbase.navigator"
+        resValue "string", "build_config_package", "com.blackmarket.blackstar"
     }
     signingConfigs {
         release {
-            def ksPath       = System.getenv('ANDROID_NAVIGATOR_APP_UPLOAD_STORE_FILE')       ?: project.findProperty('ANDROID_NAVIGATOR_APP_UPLOAD_STORE_FILE')
-            def ksPass       = System.getenv('ANDROID_NAVIGATOR_APP_UPLOAD_STORE_PASSWORD')   ?: project.findProperty('ANDROID_NAVIGATOR_APP_UPLOAD_STORE_PASSWORD')
-            def keyAliasName = System.getenv('ANDROID_NAVIGATOR_APP_UPLOAD_KEY_ALIAS')        ?: project.findProperty('ANDROID_NAVIGATOR_APP_UPLOAD_KEY_ALIAS')
-            def keyPass      = System.getenv('ANDROID_NAVIGATOR_APP_UPLOAD_KEY_PASSWORD')     ?: project.findProperty('ANDROID_NAVIGATOR_APP_UPLOAD_KEY_PASSWORD')
+            def ksPath       = System.getenv('ANDROID_BLACKSTAR_APP_UPLOAD_STORE_FILE')       ?: project.findProperty('ANDROID_BLACKSTAR_APP_UPLOAD_STORE_FILE')
+            def ksPass       = System.getenv('ANDROID_BLACKSTAR_APP_UPLOAD_STORE_PASSWORD')   ?: project.findProperty('ANDROID_BLACKSTAR_APP_UPLOAD_STORE_PASSWORD')
+            def keyAliasName = System.getenv('ANDROID_BLACKSTAR_APP_UPLOAD_KEY_ALIAS')        ?: project.findProperty('ANDROID_BLACKSTAR_APP_UPLOAD_KEY_ALIAS')
+            def keyPass      = System.getenv('ANDROID_BLACKSTAR_APP_UPLOAD_KEY_PASSWORD')     ?: project.findProperty('ANDROID_BLACKSTAR_APP_UPLOAD_KEY_PASSWORD')
 
             if (ksPath && ksPass && keyAliasName && keyPass) {
                 storeFile file(ksPath)

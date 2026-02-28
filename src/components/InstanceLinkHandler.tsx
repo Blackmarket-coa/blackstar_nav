@@ -35,11 +35,11 @@ const InstanceLinkHandler = ({}) => {
             const config = getUrlParams(url);
 
             // Set config to memory
-            setInstanceLinkConfig('FLEETBASE_KEY', get(config, 'key'));
-            setInstanceLinkConfig('FLEETBASE_HOST', get(config, 'host'));
-            setInstanceLinkConfig('SOCKETCLUSTER_HOST', get(config, 'socketcluster_host'));
-            setInstanceLinkConfig('SOCKETCLUSTER_PORT', get(config, 'socketcluster_port', '8000'));
-            setInstanceLinkConfig('SOCKETCLUSTER_SECURE', get(config, 'socketcluster_secure', 'true'));
+            setInstanceLinkConfig('BLACKSTAR_GATEWAY_KEY', get(config, 'key'));
+            setInstanceLinkConfig('BLACKSTAR_GATEWAY_HOST', get(config, 'host'));
+            setInstanceLinkConfig('BLACKSTAR_SOCKET_HOST', get(config, 'socketcluster_host'));
+            setInstanceLinkConfig('BLACKSTAR_SOCKET_PORT', get(config, 'socketcluster_port', '8000'));
+            setInstanceLinkConfig('BLACKSTAR_SOCKET_SECURE', get(config, 'socketcluster_secure', 'true'));
 
             // Logout then reboot app
             logout();
@@ -53,7 +53,7 @@ const InstanceLinkHandler = ({}) => {
     useEffect(() => {
         Linking.addEventListener('url', ({ url }) => {
             console.log('[URL EVENT FIRED!]', url);
-            if (typeof url === 'string' && url.startsWith('flbnavigator://configure')) {
+            if (typeof url === 'string' && url.startsWith('blackstar://configure')) {
                 handleSetupInstanceLink(url);
             }
         });

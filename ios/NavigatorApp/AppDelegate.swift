@@ -19,7 +19,7 @@ class AppDelegate: RCTAppDelegate {
             didFinishLaunchingWithOptions: launchOptions
         )
 
-        moduleName = "NavigatorApp"
+        moduleName = "BlackstarApp"
         dependencyProvider = RCTAppDependencyProvider()
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
