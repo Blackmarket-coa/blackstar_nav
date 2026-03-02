@@ -14,7 +14,7 @@ import { titleize } from 'inflected';
 import { formatCurrency, formatMeters, formatDuration, smartHumanize } from '../utils/format';
 import { restoreFleetbasePlace, getCoordinates } from '../utils/location';
 import { toast } from '../utils/toast';
-import { config, showActionSheet } from '../utils';
+import { showActionSheet } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from '../contexts/LocationContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -155,10 +155,6 @@ const OrderScreen = ({ route }) => {
     }, [order, adapter]);
 
     const startNavigation = useCallback(async () => {
-        if (Platform.OS === 'android') {
-            LaunchNavigator.setGoogleApiKey(config('GOOGLE_MAPS_API_KEY'));
-        }
-
         const apps = await LaunchNavigator.getAvailableApps();
         const availableApps = Object.keys(apps).filter((appName) => apps[appName] === true);
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, YStack, XStack, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -9,13 +9,13 @@ import { restoreFleetbasePlace, getCoordinates } from '../utils/location';
 import { config, last, first } from '../utils';
 import { formattedAddressFromPlace } from '../utils/location';
 import { toast } from '../utils/toast';
-import MapView, { Marker } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import LocationMarker from './LocationMarker';
 import DriverMarker from './DriverMarker';
 import useFleetbase from '../hooks/use-fleetbase';
 
-// Utility functions
+const ARCGIS_ROUTE_API = 'https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve';
+
 const calculateDeltas = (zoom) => {
     const baseDelta = 0.005;
     return baseDelta * zoom;
@@ -38,7 +38,6 @@ const getPlaceCoords = (place) => {
     return { latitude, longitude };
 };
 
-// Reusable marker label component
 const MarkerLabel = ({ label, markerOffset, theme, icon }) => (
     <YStack mb={8} px='$2' py='$2' bg='$gray-900' borderRadius='$4' space='$1' shadowColor='$shadowColor' shadowOffset={markerOffset} shadowOpacity={0.25} shadowRadius={3} width={180}>
         <XStack space='$2'>
@@ -74,8 +73,8 @@ const LiveOrderRoute = ({
     const mapRef = useRef(null);
     const { getDriverLocationAsPlace } = useLocation();
     const { adapter } = useFleetbase();
+    const [routeCoordinates, setRouteCoordinates] = useState([]);
 
-    // Retrieve attributes from the order
     const pickup = order.getAttribute('payload.pickup');
     const dropoff = order.getAttribute('payload.dropoff');
     const waypoints = order.getAttribute('payload.waypoints', []) ?? [];
@@ -88,25 +87,23 @@ const LiveOrderRoute = ({
         return new Place(destination);
     }, [pickup, dropoff, waypoints, order]);
 
-    // Determine the start waypoint
     const startWaypoint = !pickup && waypoints.length > 0 ? waypoints[0] : pickup;
-    let start = focusCurrentDestination ? getDriverLocationAsPlace() : restoreFleetbasePlace(startWaypoint, adapter);
+    const start = focusCurrentDestination ? getDriverLocationAsPlace() : restoreFleetbasePlace(startWaypoint, adapter);
 
-    // Determine the end waypoint.
     const endWaypoint = !dropoff && waypoints.length > 0 && last(waypoints) !== first(waypoints) ? last(waypoints) : dropoff;
-    let end = focusCurrentDestination ? currentDestination : restoreFleetbasePlace(endWaypoint, adapter);
+    const end = focusCurrentDestination ? currentDestination : restoreFleetbasePlace(endWaypoint, adapter);
 
-    // Get the coordinates for start and end places
     const origin = getPlaceCoords(start);
     const destination = getPlaceCoords(end);
 
-    // Get only the "middle" waypoints (excluding the first and last ones)
-    const middleWaypoints = focusCurrentDestination ? [] : waypoints.slice(1, -1).map((waypoint) => ({ coordinate: getPlaceCoords(waypoint), ...waypoint }));
+    const middleWaypoints = useMemo(() => {
+        return focusCurrentDestination ? [] : waypoints.slice(1, -1).map((waypoint) => ({ coordinate: getPlaceCoords(waypoint), ...waypoint }));
+    }, [focusCurrentDestination, waypoints]);
 
-    // Adjust marker size if a bunch of middle waypoints
-    markerSize = middleWaypoints.length > 0 ? (middleWaypoints > 3 ? 'xxs' : 'xs') : markerSize;
+    const middleCoordinates = useMemo(() => middleWaypoints.map(({ coordinate }) => coordinate), [middleWaypoints]);
 
-    // Initial map props
+    markerSize = middleWaypoints.length > 0 ? (middleWaypoints.length > 3 ? 'xxs' : 'xs') : markerSize;
+
     const initialDeltas = calculateDeltas(zoom);
     const [mapRegion, setMapRegion] = useState({
         ...origin,
@@ -123,15 +120,21 @@ const LiveOrderRoute = ({
         setZoomLevel(newZoomLevel);
     };
 
-    const fitToRoute = ({ coordinates }) => {
-        mapRef.current.fitToCoordinates(coordinates, {
-            edgePadding: { top: edgePaddingTop, right: edgePaddingRight, bottom: edgePaddingBottom, left: edgePaddingLeft },
-            animated: true,
-        });
-    };
+    const fitToCoordinates = useCallback(
+        (coordinates) => {
+            if (!mapRef.current || !Array.isArray(coordinates) || coordinates.length < 2) {
+                return;
+            }
+
+            mapRef.current.fitToCoordinates(coordinates, {
+                edgePadding: { top: edgePaddingTop, right: edgePaddingRight, bottom: edgePaddingBottom, left: edgePaddingLeft },
+                animated: true,
+            });
+        },
+        [edgePaddingTop, edgePaddingRight, edgePaddingBottom, edgePaddingLeft]
+    );
 
     const focusDriver = ({ coordinates }) => {
-        // Note: latitude and longitude should be derived from coordinates
         const { latitude, longitude } = coordinates;
         mapRef.current.animateToRegion(
             {
@@ -143,6 +146,53 @@ const LiveOrderRoute = ({
             500
         );
     };
+
+    useEffect(() => {
+        let isCancelled = false;
+
+        const fetchArcGisRoute = async () => {
+            try {
+                const stops = [origin, ...middleCoordinates, destination]
+                    .map((coord) => `${coord.longitude},${coord.latitude}`)
+                    .join(';');
+
+                const params = new URLSearchParams({
+                    f: 'json',
+                    stops,
+                    returnRoutes: 'true',
+                    returnDirections: 'false',
+                    outSR: '4326',
+                });
+
+                const arcGisApiKey = config('ARCGIS_API_KEY');
+                if (arcGisApiKey) {
+                    params.append('token', arcGisApiKey);
+                }
+
+                const response = await fetch(`${ARCGIS_ROUTE_API}?${params.toString()}`);
+                const data = await response.json();
+
+                const paths = data?.routes?.features?.[0]?.geometry?.paths ?? [];
+                const coordinates = paths.flat().map(([longitude, latitude]) => ({ latitude, longitude }));
+
+                if (!isCancelled) {
+                    setRouteCoordinates(coordinates);
+                    fitToCoordinates(coordinates);
+                }
+            } catch (error) {
+                if (!isCancelled) {
+                    setRouteCoordinates([]);
+                    toast.error('Unable to load ArcGIS route geometry.');
+                }
+            }
+        };
+
+        fetchArcGisRoute();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [origin.latitude, origin.longitude, destination.latitude, destination.longitude, middleCoordinates, fitToCoordinates]);
 
     return (
         <YStack flex={1} position='relative' overflow='hidden' width={width} height={height} {...props}>
@@ -172,17 +222,7 @@ const LiveOrderRoute = ({
                     <LocationMarker size={markerSize} />
                 </Marker>
 
-                {origin && destination && (
-                    <MapViewDirections
-                        origin={origin}
-                        destination={destination}
-                        waypoints={middleWaypoints.map(({ coordinate }) => coordinate)}
-                        apikey={config('GOOGLE_MAPS_API_KEY')}
-                        strokeWidth={4}
-                        strokeColor={theme['$blue-500'].val}
-                        onReady={fitToRoute}
-                    />
-                )}
+                {routeCoordinates.length > 1 && <Polyline coordinates={routeCoordinates} strokeWidth={4} strokeColor={theme['$blue-500'].val} />}
             </MapView>
 
             <YStack position='absolute' style={{ ...StyleSheet.absoluteFillObject }}>

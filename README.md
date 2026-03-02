@@ -68,7 +68,7 @@ Below is the steps needed to configure the environment. The first part covers co
 3.  Once you're in the Blackstar gateway admin console, create an API key for the mobile app and copy the secret value.
 4.  Once you have the required API keys, open your `.env` file.
 
-In your `.env` file supply your API secret key, and additionally a Google Maps API key. Lastly, set your app/bundle identifier and an `APP_NAME` key.
+In your `.env` file supply your API secret key, and additionally a ArcGIS API key. Lastly, set your app/bundle identifier and an `APP_NAME` key.
 
 Your `.env` file should look something like this once you're done.
 
