@@ -60,7 +60,7 @@ Deliverable:
 
 Gate:
 
-- `rg -n "fleetbase|navigator|flbnavigator"` in release code paths reviewed and either removed or justified.
+- `yarn audit:branding` passes in CI, and any allowlisted legacy token has documented justification.
 
 ## 3) Backend and integration alignment (Weeks 2–3)
 

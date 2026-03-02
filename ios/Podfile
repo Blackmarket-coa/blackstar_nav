@@ -32,7 +32,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'NavigatorApp' do
+target 'BlackstarApp' do
   config = use_native_modules!
 
   # React Native Maps dependencies
