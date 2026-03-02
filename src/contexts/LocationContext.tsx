@@ -66,7 +66,7 @@ export const LocationProvider = ({ children }) => {
             headers: {
                 Authorization: `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
-                'User-Agent': '@fleetbase/navigator-app',
+                'User-Agent': '@blackmarket/blackstar-app',
             },
             httpRootProperty: '.',
             locationTemplate:

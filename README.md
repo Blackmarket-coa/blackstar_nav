@@ -65,10 +65,10 @@ Below is the steps needed to configure the environment. The first part covers co
 
 1.  Get your API Keys;
 2.  If you don't already have an account for your backend instance, create one from your provider's console.
-3.  Once you're in the Fleetbase console select the "Developers" button in the top navigation. Next, select API Keys from the menu in the Developers section, and create a new API key. Copy your secret key generated, you'll need it later.
+3.  Once you're in the Blackstar gateway admin console, create an API key for the mobile app and copy the secret value.
 4.  Once you have the required API keys, open your `.env` file.
 
-In your `.env` file supply your API secret key, and additionally a Google Maps API key. Lastly, set your app/bundle identifier and an `APP_NAME` key.
+In your `.env` file supply your API secret key, and additionally a ArcGIS API key. Lastly, set your app/bundle identifier and an `APP_NAME` key.
 
 Your `.env` file should look something like this once you're done.
 
@@ -77,8 +77,11 @@ Your `.env` file should look something like this once you're done.
 APP_NAME=Blackstar Navigator
 APP_IDENTIFIER=com.blackmarket.blackstar
 APP_LINK_PREFIX=blackstar://
-FLEETBASE_HOST=https://api.fleetbase.io
-FLEETBASE_KEY=
+BLACKSTAR_GATEWAY_HOST=https://api.blackmarket.coa
+BLACKSTAR_GATEWAY_KEY=
+BLACKSTAR_SOCKET_HOST=socket.blackmarket.coa
+BLACKSTAR_SOCKET_PORT=8000
+BLACKSTAR_SOCKET_SECURE=true
 ```
 
 ### Running in Simulator
@@ -99,9 +102,9 @@ yarn android
 
 ### Documentation
 
-See the [documentation webpage](https://fleetbase.io/docs).
+See the Blackstar internal documentation and API runbooks for environment-specific setup.
 
-If you would like to make contributions to the Fleetbase Javascript SDK documentation source, here is a [guide](https://github.com/fleetbase/fleetbase-js/blob/master/CONTRIBUTING.md) in doing so.
+If you contribute to this app, keep feature parity aligned with the Blackstar gateway contracts and release checklist.
 
 ### Roadmap
 

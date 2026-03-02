@@ -12,21 +12,21 @@ const InstanceLinkScreen = () => {
     const insets = useSafeAreaInsets();
     const { isDarkMode } = useAppTheme();
     const { instanceLinkConfig, setInstanceLinkConfig, clearInstanceLinkConfig } = useConfig();
-    const [fleetbaseHost, setFleetbaseHost] = useState(instanceLinkConfig.FLEETBASE_HOST);
-    const [fleetbaseKey, setFleetbaseKey] = useState(instanceLinkConfig.FLEETBASE_KEY);
-    const [socketClusterHost, setSocketClusterHost] = useState(instanceLinkConfig.SOCKETCLUSTER_HOST);
-    const [socketClusterPort, setSocketClusterPort] = useState(instanceLinkConfig.SOCKETCLUSTER_PORT);
-    const [socketClusterSecure, setSocketClusterSecure] = useState(toBoolean(instanceLinkConfig.SOCKETCLUSTER_SECURE));
+    const [gatewayHost, setFleetbaseHost] = useState(instanceLinkConfig.BLACKSTAR_GATEWAY_HOST);
+    const [gatewayKey, setFleetbaseKey] = useState(instanceLinkConfig.BLACKSTAR_GATEWAY_KEY);
+    const [socketClusterHost, setSocketClusterHost] = useState(instanceLinkConfig.BLACKSTAR_SOCKET_HOST);
+    const [socketClusterPort, setSocketClusterPort] = useState(instanceLinkConfig.BLACKSTAR_SOCKET_PORT);
+    const [socketClusterSecure, setSocketClusterSecure] = useState(toBoolean(instanceLinkConfig.BLACKSTAR_SOCKET_SECURE));
 
     const handleSave = useCallback(() => {
-        setInstanceLinkConfig('FLEETBASE_HOST', fleetbaseHost);
-        setInstanceLinkConfig('FLEETBASE_KEY', fleetbaseKey);
-        setInstanceLinkConfig('SOCKETCLUSTER_HOST', socketClusterHost);
-        setInstanceLinkConfig('SOCKETCLUSTER_PORT', socketClusterPort);
-        setInstanceLinkConfig('SOCKETCLUSTER_SECURE', socketClusterSecure);
+        setInstanceLinkConfig('BLACKSTAR_GATEWAY_HOST', gatewayHost);
+        setInstanceLinkConfig('BLACKSTAR_GATEWAY_KEY', gatewayKey);
+        setInstanceLinkConfig('BLACKSTAR_SOCKET_HOST', socketClusterHost);
+        setInstanceLinkConfig('BLACKSTAR_SOCKET_PORT', socketClusterPort);
+        setInstanceLinkConfig('BLACKSTAR_SOCKET_SECURE', socketClusterSecure);
 
         Alert.alert('Instance connection config saved successfully.');
-    }, [setInstanceLinkConfig, fleetbaseHost, fleetbaseKey, socketClusterHost, socketClusterPort, socketClusterSecure]);
+    }, [setInstanceLinkConfig, gatewayHost, gatewayKey, socketClusterHost, socketClusterPort, socketClusterSecure]);
 
     const handleReset = useCallback(() => {
         clearInstanceLinkConfig();
@@ -44,12 +44,12 @@ const InstanceLinkScreen = () => {
                 <YStack space='$5' px='$4' py='$4'>
                     <YStack space='$2'>
                         <Text color='$textPrimary' fontWeight='bold'>
-                            FLEETBASE HOST
+                            BLACKSTAR GATEWAY HOST
                         </Text>
                         <Input
-                            value={fleetbaseHost}
+                            value={gatewayHost}
                             onChangeText={(text) => setFleetbaseHost(text)}
-                            placeholder='Input host of Fleetbase instance...'
+                            placeholder='Input host of Blackstar gateway...'
                             borderWidth={1}
                             color='$textPrimary'
                             borderColor='$borderColor'
@@ -63,12 +63,12 @@ const InstanceLinkScreen = () => {
                     </YStack>
                     <YStack space='$2'>
                         <Text color='$textPrimary' fontWeight='bold'>
-                            FLEETBASE KEY
+                            BLACKSTAR GATEWAY KEY
                         </Text>
                         <Input
-                            value={fleetbaseKey}
+                            value={gatewayKey}
                             onChangeText={(text) => setFleetbaseKey(text)}
-                            placeholder='Input API Key for Fleetbase instance...'
+                            placeholder='Input API key for Blackstar gateway...'
                             borderWidth={1}
                             color='$textPrimary'
                             borderColor='$borderColor'
@@ -87,7 +87,7 @@ const InstanceLinkScreen = () => {
                         <Input
                             value={socketClusterHost}
                             onChangeText={(text) => setSocketClusterHost(text)}
-                            placeholder='Input SocketCluster host for Fleetbase instance...'
+                            placeholder='Input realtime socket host for Blackstar gateway...'
                             borderWidth={1}
                             color='$textPrimary'
                             borderColor='$borderColor'
@@ -106,7 +106,7 @@ const InstanceLinkScreen = () => {
                         <Input
                             value={socketClusterPort}
                             onChangeText={(text) => setSocketClusterPort(text)}
-                            placeholder='Input SocketCluster port for Fleetbase instance...'
+                            placeholder='Input realtime socket port for Blackstar gateway...'
                             keyboardType='phone-pad'
                             borderWidth={1}
                             color='$textPrimary'

@@ -1,4 +1,4 @@
-package io.fleetbase.navigator
+package com.blackmarket.blackstar
 
 import android.app.Application
 import com.facebook.react.PackageList

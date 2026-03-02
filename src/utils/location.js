@@ -23,28 +23,46 @@ export async function geocode(latitude, longitude, options = {}) {
     }
 
     try {
-        const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-            params: {
-                latlng: `${latitude},${longitude}`,
-                sensor: false,
-                language: 'en-US',
-                key: config('GOOGLE_MAPS_API_KEY'),
-            },
-        });
+        const params = {
+            f: 'json',
+            location: `${longitude},${latitude}`,
+            langCode: 'en',
+        };
 
-        if (isEmpty(response.data.results)) {
+        const arcGisApiKey = config('ARCGIS_API_KEY');
+        if (arcGisApiKey) {
+            params.token = arcGisApiKey;
+        }
+
+        const response = await axios.get('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode', { params });
+
+        const result = response.data?.address;
+        if (!result) {
             throw new Error('No geocode results for provided coordinates.');
         }
 
-        // Allow full results
+        const geocodeResult = {
+            formatted_address: result.LongLabel ?? result.Match_addr ?? result.Address,
+            geometry: {
+                location: {
+                    lat: latitude,
+                    lng: longitude,
+                },
+            },
+            address_components: [
+                { long_name: result.Address, short_name: result.Address, types: ['route'] },
+                { long_name: result.City, short_name: result.City, types: ['locality'] },
+                { long_name: result.Region, short_name: result.Region, types: ['administrative_area_level_1'] },
+                { long_name: result.Postal, short_name: result.Postal, types: ['postal_code'] },
+                { long_name: result.CountryCode, short_name: result.CountryCode, types: ['country'] },
+            ].filter((component) => component.long_name),
+        };
+
         if (options.withAllResults === true) {
-            return response.data.results.map((result) => {
-                return options.asGoogleAddress === true ? new GoogleAddress(result) : result;
-            });
+            return [geocodeResult];
         }
 
-        const result = response.data.results[0];
-        return options.asGoogleAddress === true ? new GoogleAddress(result) : result;
+        return geocodeResult;
     } catch (error) {
         console.warn('Geocoding error:', error);
         return null;
@@ -54,58 +72,85 @@ export async function geocode(latitude, longitude, options = {}) {
 export async function geocodeAutocomplete(input, coordinates = null) {
     try {
         const params = {
-            input,
-            // types: 'address', // Restrict results to addresses only
-            language: 'en-US',
-            key: config('GOOGLE_MAPS_API_KEY'),
+            f: 'json',
+            text: input,
+            maxSuggestions: 8,
+            countryCode: 'WORLD',
         };
 
-        if (isArray(coordinates)) {
-            params.location = `${coordinates[0]},${coordinates[1]}`;
-            params.radius = 5000; // 5km radius
+        const arcGisApiKey = config('ARCGIS_API_KEY');
+        if (arcGisApiKey) {
+            params.token = arcGisApiKey;
         }
 
-        const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json', {
+        if (isArray(coordinates)) {
+            params.location = `${coordinates[1]},${coordinates[0]}`;
+            params.distance = 5000;
+        }
+
+        const response = await axios.get('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest', {
             params,
         });
 
-        // Extract predictions from response
-        const predictions = response.data.predictions.map((prediction) => {
-            const segments = parseAutocompleteAddress(prediction.description);
+        const suggestions = response.data?.suggestions ?? [];
+        return suggestions.map((suggestion) => {
+            const segments = parseAutocompleteAddress(suggestion.text);
 
             return {
-                description: prediction.description,
-                place_id: prediction.place_id,
+                description: suggestion.text,
+                place_id: suggestion.magicKey,
+                text: suggestion.text,
                 ...segments,
             };
         });
-
-        return predictions;
     } catch (error) {
         console.warn('Autocomplete error:', error);
         return [];
     }
 }
 
-export async function getPlaceDetails(placeId) {
+export async function getPlaceDetails(placeId, text = '') {
     try {
-        // Make a request to the Google Places Details API
-        const response = await axios.get('https://maps.googleapis.com/maps/api/place/details/json', {
-            params: {
-                place_id: placeId,
-                key: config('GOOGLE_MAPS_API_KEY'),
-                // You can include 'fields' to limit the data retrieved or omit it for all available details
-                fields: 'name,formatted_address,geometry,place_id,types,international_phone_number,website,address_components',
-            },
-        });
+        const params = {
+            f: 'json',
+            outFields: 'Match_addr,Addr_type,Type,Place_addr,City,Region,Postal,CountryCode',
+            maxLocations: 1,
+            outSR: 4326,
+            magicKey: placeId,
+            singleLine: text || placeId,
+        };
 
-        // Handle API response
-        if (response.data.status !== 'OK') {
-            throw new Error(`Google API Error: ${response.data.status}`);
+        const arcGisApiKey = config('ARCGIS_API_KEY');
+        if (arcGisApiKey) {
+            params.token = arcGisApiKey;
         }
 
-        // Return the full result object from Google
-        return response.data.result;
+        const response = await axios.get('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates', {
+            params,
+        });
+
+        const candidate = response.data?.candidates?.[0];
+        if (!candidate) {
+            return null;
+        }
+
+        return {
+            name: candidate.attributes?.Type ?? candidate.address,
+            formatted_address: candidate.address,
+            geometry: {
+                location: {
+                    lat: candidate.location.y,
+                    lng: candidate.location.x,
+                },
+            },
+            address_components: [
+                { long_name: candidate.attributes?.Place_addr, short_name: candidate.attributes?.Place_addr, types: ['route'] },
+                { long_name: candidate.attributes?.City, short_name: candidate.attributes?.City, types: ['locality'] },
+                { long_name: candidate.attributes?.Region, short_name: candidate.attributes?.Region, types: ['administrative_area_level_1'] },
+                { long_name: candidate.attributes?.Postal, short_name: candidate.attributes?.Postal, types: ['postal_code'] },
+                { long_name: candidate.attributes?.CountryCode, short_name: candidate.attributes?.CountryCode, types: ['country'] },
+            ].filter((component) => component.long_name),
+        };
     } catch (error) {
         console.warn('Error fetching place details:', error.message);
         return null;
@@ -200,7 +245,7 @@ export function formatAddressSecondaryIdentifier(place) {
     }
 }
 
-export function serializGoogleAddress(googleAddress) {
+export function serializeAddressObject(googleAddress) {
     let attributes = {};
 
     if (googleAddress instanceof GoogleAddress || typeof googleAddress.all === 'function') {

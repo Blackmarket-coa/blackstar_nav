@@ -7,7 +7,7 @@ This plan outlines the remaining work to fully tailor this repository for Blacks
 Because this environment cannot access GitHub over HTTPS (403 from `raw.githubusercontent.com`), parity should be driven by an explicit feature inventory supplied by the Blackstar team (or by running this audit in an environment with GitHub access).
 
 Required artifact:
-- A `blackstar-feature-matrix.csv` with columns:
+- A checked-in `docs/blackstar-feature-matrix.csv` with columns:
   - `feature_name`
   - `in_blackstar` (yes/no)
   - `required_for_launch` (yes/no)

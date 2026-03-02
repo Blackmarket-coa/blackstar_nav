@@ -33,7 +33,7 @@ const DriverAccountScreen = () => {
     };
 
     const handleOpenTermsOfService = async () => {
-        const url = 'https://www.fleetbase.io/terms';
+        const url = 'https://blackmarket.coa/terms';
         const supported = await Linking.canOpenURL(url);
 
         if (supported) {
@@ -44,7 +44,7 @@ const DriverAccountScreen = () => {
     };
 
     const handleOpenPrivacyPolicy = async () => {
-        const url = 'https://www.fleetbase.io/privacy-policy';
+        const url = 'https://blackmarket.coa/privacy-policy';
         const supported = await Linking.canOpenURL(url);
 
         if (supported) {

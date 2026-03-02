@@ -29,11 +29,11 @@ const SetupWarningScreen = ({ error }: { error?: Error }) => {
                 </Stack>
 
                 <YStack width='100%'>
-                    {keyMissing('FLEETBASE_KEY') && (
+                    {keyMissing('BLACKSTAR_GATEWAY_KEY') && keyMissing('FLEETBASE_KEY') && (
                         <XStack alignItems='center' bg='$red1' borderRadius='$2' px='$3' py='$2' mb='$2'>
                             <FontAwesomeIcon icon={faExclamation} size={12} color='#7F1D1D' style={{ marginRight: 8 }} />
                             <Text color='$red900' fontWeight='bold'>
-                                {t('common.fleetbase')} {t('common.apiKey')}
+                                Blackstar Gateway {t('common.apiKey')}
                             </Text>
                             <Text color='$red900' fontWeight='500' ml='$1'>
                                 {t('SetupWarningScreen.envMissing')}

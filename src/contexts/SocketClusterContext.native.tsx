@@ -18,10 +18,10 @@ export const SocketClusterProvider = ({ children }) => {
     useEffect(() => {
         // Initialize the socket connection
         const options = {
-            hostname: resolveConnectionConfig('SOCKETCLUSTER_HOST'),
-            port: resolveConnectionConfig('SOCKETCLUSTER_PORT'),
-            path: resolveConnectionConfig('SOCKETCLUSTER_PATH'),
-            secure: resolveConnectionConfig('SOCKETCLUSTER_SECURE'),
+            hostname: resolveConnectionConfig('BLACKSTAR_SOCKET_HOST'),
+            port: resolveConnectionConfig('BLACKSTAR_SOCKET_PORT'),
+            path: resolveConnectionConfig('BLACKSTAR_SOCKET_PATH'),
+            secure: resolveConnectionConfig('BLACKSTAR_SOCKET_SECURE'),
         };
 
         const scSocket = socketClusterClient.create(options);

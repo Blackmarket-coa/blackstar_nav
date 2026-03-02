@@ -295,8 +295,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.fleetbase.navigator;
-				PRODUCT_NAME = NavigatorApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.blackmarket.blackstar;
+				PRODUCT_NAME = BlackstarApp;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/NavigatorApp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -327,8 +327,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.fleetbase.navigator;
-				PRODUCT_NAME = NavigatorApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.blackmarket.blackstar;
+				PRODUCT_NAME = BlackstarApp;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/NavigatorApp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

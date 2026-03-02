@@ -7,72 +7,77 @@ import useStorage from '../hooks/use-storage';
 const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
-    const [instanceLinkedFleetbaseHost, setInstanceLinkedFleetbaseHost] = useStorage('INSTANCE_LINK_FLEETBASE_HOST');
-    const [instanceLinkedFleetbaseKey, setInstanceLinkedFleetbaseKey] = useStorage('INSTANCE_LINK_FLEETBASE_KEY');
-    const [instanceLinkedSocketclusterHost, setInstanceLinkedSocketclusterHost] = useStorage('INSTANCE_LINK_SOCKETCLUSTER_HOST');
-    const [instanceLinkedSocketclusterPort, setInstanceLinkedSocketclusterPort] = useStorage('INSTANCE_LINK_SOCKETCLUSTER_PORT');
-    const [instanceLinkedSocketclusterSecure, setInstanceLinkedSocketclusterSecure] = useStorage('INSTANCE_LINK_SOCKETCLUSTER_SECURE');
+    const [instanceLinkedGatewayHost, setInstanceLinkedGatewayHost] = useStorage('INSTANCE_LINK_BLACKSTAR_GATEWAY_HOST');
+    const [instanceLinkedGatewayKey, setInstanceLinkedGatewayKey] = useStorage('INSTANCE_LINK_BLACKSTAR_GATEWAY_KEY');
+    const [instanceLinkedSocketHost, setInstanceLinkedSocketHost] = useStorage('INSTANCE_LINK_BLACKSTAR_SOCKET_HOST');
+    const [instanceLinkedSocketPort, setInstanceLinkedSocketPort] = useStorage('INSTANCE_LINK_BLACKSTAR_SOCKET_PORT');
+    const [instanceLinkedSocketSecure, setInstanceLinkedSocketSecure] = useStorage('INSTANCE_LINK_BLACKSTAR_SOCKET_SECURE');
 
     const setInstanceLinkConfig = useCallback(
         (key, value) => {
             switch (key) {
                 case 'API_HOST':
+                case 'BLACKSTAR_GATEWAY_HOST':
                 case 'FLEETBASE_HOST':
-                    setInstanceLinkedFleetbaseHost(value);
+                    setInstanceLinkedGatewayHost(value);
                     break;
                 case 'API_KEY':
+                case 'BLACKSTAR_GATEWAY_KEY':
                 case 'FLEETBASE_KEY':
-                    setInstanceLinkedFleetbaseKey(value);
+                    setInstanceLinkedGatewayKey(value);
                     break;
                 case 'SC_HOST':
+                case 'BLACKSTAR_SOCKET_HOST':
                 case 'SOCKETCLUSTER_HOST':
-                    setInstanceLinkedSocketclusterHost(value);
+                    setInstanceLinkedSocketHost(value);
                     break;
                 case 'SC_PORT':
+                case 'BLACKSTAR_SOCKET_PORT':
                 case 'SOCKETCLUSTER_PORT':
-                    setInstanceLinkedSocketclusterPort(value);
+                    setInstanceLinkedSocketPort(value);
                     break;
                 case 'SC_SECURE':
+                case 'BLACKSTAR_SOCKET_SECURE':
                 case 'SOCKETCLUSTER_SECURE':
-                    setInstanceLinkedSocketclusterSecure(value);
+                    setInstanceLinkedSocketSecure(value);
                     break;
             }
         },
-        [setInstanceLinkedFleetbaseHost, setInstanceLinkedFleetbaseKey, setInstanceLinkedSocketclusterHost, setInstanceLinkedSocketclusterPort, setInstanceLinkedSocketclusterSecure]
+        [setInstanceLinkedGatewayHost, setInstanceLinkedGatewayKey, setInstanceLinkedSocketHost, setInstanceLinkedSocketPort, setInstanceLinkedSocketSecure]
     );
 
     const getInstanceLinkConfig = useCallback(() => {
         return {
-            FLEETBASE_HOST: instanceLinkedFleetbaseHost,
-            FLEETBASE_KEY: instanceLinkedFleetbaseKey,
-            SOCKETCLUSTER_HOST: instanceLinkedSocketclusterHost,
-            SOCKETCLUSTER_PORT: instanceLinkedSocketclusterPort,
-            SOCKETCLUSTER_SECURE: instanceLinkedSocketclusterSecure,
+            BLACKSTAR_GATEWAY_HOST: instanceLinkedGatewayHost,
+            BLACKSTAR_GATEWAY_KEY: instanceLinkedGatewayKey,
+            BLACKSTAR_SOCKET_HOST: instanceLinkedSocketHost,
+            BLACKSTAR_SOCKET_PORT: instanceLinkedSocketPort,
+            BLACKSTAR_SOCKET_SECURE: instanceLinkedSocketSecure,
         };
-    }, [instanceLinkedFleetbaseHost, instanceLinkedFleetbaseKey, instanceLinkedSocketclusterHost, instanceLinkedSocketclusterPort, instanceLinkedSocketclusterSecure]);
+    }, [instanceLinkedGatewayHost, instanceLinkedGatewayKey, instanceLinkedSocketHost, instanceLinkedSocketPort, instanceLinkedSocketSecure]);
 
     const clearInstanceLinkConfig = useCallback(() => {
-        setInstanceLinkedFleetbaseHost(undefined);
-        setInstanceLinkedFleetbaseKey(undefined);
-        setInstanceLinkedSocketclusterHost(undefined);
-        setInstanceLinkedSocketclusterPort(undefined);
-        setInstanceLinkedSocketclusterSecure(undefined);
-    }, [setInstanceLinkedFleetbaseHost, setInstanceLinkedFleetbaseKey, setInstanceLinkedSocketclusterHost, setInstanceLinkedSocketclusterPort, setInstanceLinkedSocketclusterSecure]);
+        setInstanceLinkedGatewayHost(undefined);
+        setInstanceLinkedGatewayKey(undefined);
+        setInstanceLinkedSocketHost(undefined);
+        setInstanceLinkedSocketPort(undefined);
+        setInstanceLinkedSocketSecure(undefined);
+    }, [setInstanceLinkedGatewayHost, setInstanceLinkedGatewayKey, setInstanceLinkedSocketHost, setInstanceLinkedSocketPort, setInstanceLinkedSocketSecure]);
 
     const resolveConnectionConfig = useCallback(
         (key, defaultValue = null) => {
             const fullConfig = {
-                FLEETBASE_HOST: instanceLinkedFleetbaseHost ?? config('FLEETBASE_HOST'),
-                FLEETBASE_KEY: instanceLinkedFleetbaseKey ?? config('FLEETBASE_KEY'),
-                SOCKETCLUSTER_HOST: instanceLinkedSocketclusterHost ?? config('SOCKETCLUSTER_HOST', 'socket.fleetbase.io'),
-                SOCKETCLUSTER_PORT: parseInt(instanceLinkedSocketclusterPort ?? config('SOCKETCLUSTER_PORT', '8000')),
-                SOCKETCLUSTER_SECURE: toBoolean(instanceLinkedSocketclusterSecure ?? config('SOCKETCLUSTER_SECURE', true)),
-                SOCKETCLUSTER_PATH: config('SOCKETCLUSTER_PATH', '/socketcluster/'),
+                BLACKSTAR_GATEWAY_HOST: instanceLinkedGatewayHost ?? config('BLACKSTAR_GATEWAY_HOST', config('FLEETBASE_HOST')),
+                BLACKSTAR_GATEWAY_KEY: instanceLinkedGatewayKey ?? config('BLACKSTAR_GATEWAY_KEY', config('FLEETBASE_KEY')),
+                BLACKSTAR_SOCKET_HOST: instanceLinkedSocketHost ?? config('BLACKSTAR_SOCKET_HOST', config('SOCKETCLUSTER_HOST', 'socket.blackmarket.coa')),
+                BLACKSTAR_SOCKET_PORT: parseInt(instanceLinkedSocketPort ?? config('BLACKSTAR_SOCKET_PORT', config('SOCKETCLUSTER_PORT', '8000'))),
+                BLACKSTAR_SOCKET_SECURE: toBoolean(instanceLinkedSocketSecure ?? config('BLACKSTAR_SOCKET_SECURE', config('SOCKETCLUSTER_SECURE', true))),
+                BLACKSTAR_SOCKET_PATH: config('BLACKSTAR_SOCKET_PATH', config('SOCKETCLUSTER_PATH', '/socketcluster/')),
             };
 
             return get(fullConfig, key, defaultValue);
         },
-        [instanceLinkedFleetbaseHost, instanceLinkedFleetbaseKey, instanceLinkedSocketclusterHost, instanceLinkedSocketclusterPort, instanceLinkedSocketclusterSecure]
+        [instanceLinkedGatewayHost, instanceLinkedGatewayKey, instanceLinkedSocketHost, instanceLinkedSocketPort, instanceLinkedSocketSecure]
     );
 
     const value = useMemo(() => {
@@ -84,30 +89,30 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
             instanceLinkConfig: getInstanceLinkConfig(),
             getInstanceLinkConfig,
             resolveConnectionConfig,
-            setInstanceLinkedFleetbaseHost,
-            setInstanceLinkedFleetbaseKey,
-            setInstanceLinkedSocketclusterHost,
-            setInstanceLinkedSocketclusterPort,
-            setInstanceLinkedSocketclusterSecure,
+            setInstanceLinkedGatewayHost,
+            setInstanceLinkedGatewayKey,
+            setInstanceLinkedSocketHost,
+            setInstanceLinkedSocketPort,
+            setInstanceLinkedSocketSecure,
             setInstanceLinkConfig,
             clearInstanceLinkConfig,
         };
     }, [
         getInstanceLinkConfig,
         resolveConnectionConfig,
-        setInstanceLinkedFleetbaseHost,
-        setInstanceLinkedFleetbaseKey,
-        setInstanceLinkedSocketclusterHost,
-        setInstanceLinkedSocketclusterPort,
-        setInstanceLinkedSocketclusterSecure,
+        setInstanceLinkedGatewayHost,
+        setInstanceLinkedGatewayKey,
+        setInstanceLinkedSocketHost,
+        setInstanceLinkedSocketPort,
+        setInstanceLinkedSocketSecure,
         setInstanceLinkConfig,
         clearInstanceLinkConfig,
         // Instance link config values
-        instanceLinkedFleetbaseHost,
-        instanceLinkedFleetbaseKey,
-        instanceLinkedSocketclusterHost,
-        instanceLinkedSocketclusterPort,
-        instanceLinkedSocketclusterSecure,
+        instanceLinkedGatewayHost,
+        instanceLinkedGatewayKey,
+        instanceLinkedSocketHost,
+        instanceLinkedSocketPort,
+        instanceLinkedSocketSecure,
     ]);
 
     return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
