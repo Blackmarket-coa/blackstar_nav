@@ -1,92 +1,148 @@
 # Blackstar feature parity plan
 
-This plan outlines the remaining work to fully tailor this repository for Blackstar and avoid a partial rebrand.
+This plan defines the work needed to reach a complete Blackstar release with no accidental Fleetbase/Navigator leftovers in shipped code paths.
 
-## 0) Establish source-of-truth feature inventory
+## Goals
 
-Because this environment cannot access GitHub over HTTPS (403 from `raw.githubusercontent.com`), parity should be driven by an explicit feature inventory supplied by the Blackstar team (or by running this audit in an environment with GitHub access).
+- Deliver Blackstar-branded apps (Android, iOS, and shared RN layers) with consistent naming, assets, and runtime defaults.
+- Confirm functional parity for Blackstar launch-critical workflows.
+- Lock in CI/CD and release metadata so future builds remain Blackstar-native.
 
-Required artifact:
-- A checked-in `docs/blackstar-feature-matrix.csv` with columns:
-  - `feature_name`
-  - `in_blackstar` (yes/no)
-  - `required_for_launch` (yes/no)
-  - `status_in_this_repo` (present/partial/missing)
-  - `owner`
-  - `target_release`
+## Scope and assumptions
 
-## 1) Complete branding and identity refactor
+- Scope includes `app/`, mobile native projects, release pipelines, and any shared runtime configuration used by production builds.
+- Intentional third-party references (e.g., SDK package names that cannot be changed) are allowed if documented.
+- `legacy/` treatment must be explicitly decided to avoid split-brand releases.
 
-The previous change only updated top-level metadata. There are still many Fleetbase/Navigator identifiers that must be changed.
+## 1) Source-of-truth feature inventory (Week 1)
+
+Create and maintain `docs/blackstar-feature-matrix.csv` as the launch source of truth.
+
+Required columns:
+
+- `feature_name`
+- `in_blackstar` (yes/no)
+- `required_for_launch` (yes/no)
+- `status_in_this_repo` (present/partial/missing)
+- `owner`
+- `target_release`
+- `notes`
+
+Execution:
+
+1. Hold a 60-minute product + ops + engineering review to agree launch-critical capabilities.
+2. Populate matrix with all domains (auth, orders, routing, POD, fuel reports, issues, chat, fleet/vehicles).
+3. Mark each required row with an engineering owner and target release.
+
+Deliverable:
+
+- Complete matrix checked into version control and referenced by weekly status updates.
+
+## 2) Branding and identifier refactor (Weeks 1–2)
 
 ### Android
-- Rename Java/Kotlin package paths from `com.fleetbase.navigator` to Blackstar package IDs.
-- Update app namespace and application ID in Gradle.
-- Replace deep-link scheme `flbnavigator` in Android manifest.
-- Revisit `network_security_config.xml` domain allowlist (`fleetbase.io`, `fleetbase.engineering`).
+
+- Rename package path from `com.fleetbase.navigator` to final Blackstar package ID.
+- Update `applicationId`/namespace and all manifest references.
+- Replace deep-link scheme `flbnavigator` with Blackstar scheme.
+- Audit/remove Fleetbase domains in network security config unless explicitly required.
 
 ### iOS
-- Rename Xcode target/project/product currently named `NavigatorApp`.
-- Update iOS bundle ID and URL schemes still using Fleetbase/Navigator naming.
-- Audit plist domains and associated domains entries tied to Fleetbase domains.
 
-### Shared JS / React Native
-- Replace hardcoded `@fleetbase/navigator-app` user-agent string.
-- Audit labels and copy that are still Fleetbase-branded.
+- Rename target/product from `NavigatorApp` to Blackstar naming.
+- Update bundle identifier(s), URL schemes, and associated domains.
+- Validate Info.plist keys and entitlements for old Fleetbase naming.
 
-## 2) Backend and integration alignment
+### Shared JS/React Native
 
-The app currently defaults to Fleetbase host/key environment variables and socket defaults.
+- Remove Fleetbase/Navigator naming from user-facing copy and diagnostics (e.g., user agent labels).
+- Centralize brand constants (app name, links, support labels, scheme identifiers) in one config module.
 
-- Decide whether Blackstar will continue using Fleetbase APIs directly or a Blackstar gateway.
-- If using a Blackstar backend surface:
-  - introduce Blackstar env keys (host, auth, realtime)
-  - map/replace Fleetbase SDK usage where API contracts differ
-  - define migration path for auth, order, issue, fuel-report, and chat resources.
-- If still using Fleetbase APIs:
-  - keep SDK integration but centralize tenant-specific defaults and labels to avoid future hardcoded fleetbase branding.
+Gate:
 
-## 3) Feature parity validation across screens
+- `rg -n "fleetbase|navigator|flbnavigator"` in release code paths reviewed and either removed or justified.
 
-Inventory each major domain and validate parity with Blackstar requirements:
+## 3) Backend and integration alignment (Weeks 2–3)
 
-- Authentication & account lifecycle
-- Orders and task flow
-- Navigation/routing behavior
-- Proof of delivery and signatures
-- Fuel reports
-- Issue management
-- Chat and notifications
-- Fleet and vehicle views
+Decide architecture path:
+
+- **Path A: Blackstar backend/gateway**
+  - Introduce Blackstar env keys for API/auth/realtime.
+  - Document API contract deltas and add translation layer where needed.
+  - Validate auth, orders, issues, fuel reports, and chat end-to-end.
+
+- **Path B: Fleetbase APIs retained**
+  - Keep SDK usage but move all tenant-specific defaults out of scattered constants.
+  - Remove hardcoded Fleetbase labels and centralize runtime host/key configuration.
+
+Deliverables:
+
+- Architecture decision record (ADR) in `docs/`.
+- Environment variable contract documented for local/dev/staging/prod.
+
+## 4) Domain parity validation (Weeks 3–4)
 
 For each domain:
-- list required Blackstar behaviors
-- map to existing screens/components
-- identify missing API fields, business rules, and UX states
-- add acceptance tests (or manual test scripts if E2E unavailable).
 
-## 4) Legacy folder decision
+- Authentication/account lifecycle
+- Orders/task flow
+- Navigation/routing
+- Proof of delivery/signatures
+- Fuel reports
+- Issue management
+- Chat/notifications
+- Fleet/vehicle views
 
-This repo contains a large `legacy/` app with duplicated branding and config. Decide one path:
+Run the same checklist:
 
-- **Option A (recommended):** deprecate `legacy/` from release path and document clearly.
-- **Option B:** include `legacy/` in rebrand work and update all app IDs/package names/domains there too.
+1. Required Blackstar behaviors listed.
+2. Current screens/components/API mappings documented.
+3. Gaps tagged as missing field / business rule / UX state.
+4. Validation added (automated test or manual test script with expected outcomes).
 
-Without this decision, rebrand will remain inconsistent.
+Deliverable:
 
-## 5) CI/CD and release assets
+- Matrix rows for `required_for_launch=yes` all moved to `present` or assigned blocker status with ETA.
 
-- Update app icon/splash assets to Blackstar-approved versions.
-- Update store listing metadata and bundle IDs for iOS/Android pipelines.
-- Verify signing configs, provisioning, and release workflows use Blackstar identifiers.
+## 5) Legacy folder decision (Week 1, blocking)
 
-## 6) Definition of done
+Choose one path and document in README/release runbook:
 
-Use this exit checklist:
+- **Option A (recommended):** De-scope `legacy/` from release artifacts and CI.
+- **Option B:** Include `legacy/` and complete full rebrand + config alignment there.
 
-- [ ] No Fleetbase/Navigator naming remains in release codepaths (except intentionally retained SDK package names).
-- [ ] Mobile identifiers (bundle ID, package name, deep links) are Blackstar-specific.
-- [ ] Backend defaults and runtime linking flow match Blackstar infrastructure.
-- [ ] Domain-level feature matrix shows all required features marked `present`.
-- [ ] Smoke tests pass on iOS, Android, and web (if web is shipped).
-- [ ] README + runbooks reflect final Blackstar architecture.
+No release should proceed until this decision is explicit.
+
+## 6) CI/CD and release hardening (Weeks 4–5)
+
+- Replace app icon/splash/store assets with approved Blackstar assets.
+- Update pipeline bundle IDs/package names/version metadata.
+- Confirm signing/provisioning references Blackstar identifiers.
+- Add release checks preventing old branding strings in packaged builds.
+
+Suggested automated guardrail:
+
+- CI step that fails on disallowed branding tokens in release artifacts or source allowlist.
+
+## 7) Definition of done (release gate)
+
+- [ ] No unintended Fleetbase/Navigator naming remains in release code paths.
+- [ ] Android package/app IDs, iOS bundle IDs, and deep links are Blackstar-specific.
+- [ ] Runtime backend/auth/realtime configuration reflects final Blackstar architecture.
+- [ ] Feature matrix shows all `required_for_launch=yes` items as `present`.
+- [ ] Smoke/regression checks pass for shipped platforms.
+- [ ] README and release runbooks match the final architecture and release process.
+
+## Suggested owner model
+
+- **Product owner:** feature matrix scope + launch criteria.
+- **Mobile lead:** iOS/Android identifiers, deep links, native config.
+- **Platform/backend lead:** env strategy + API integration path.
+- **QA lead:** parity validation scripts and release sign-off checklist.
+
+## Reporting cadence
+
+- Weekly status update anchored to matrix deltas:
+  - Newly `present` features
+  - Remaining blockers
+  - Risk level (low/medium/high) per launch-critical domain
