@@ -33,7 +33,8 @@ module.exports = {
             directory: path.resolve(__dirname, 'dist'),
         },
         compress: true,
-        port: 8080,
+        host: '0.0.0.0',
+        port: Number(process.env.PORT) || 8080,
         hot: true,
     },
     plugins: [
