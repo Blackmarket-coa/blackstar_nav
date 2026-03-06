@@ -180,7 +180,7 @@ jobs:
             - name: Enable Corepack and install dependencies
               run: |
                   corepack enable
-                  corepack prepare yarn@3.6.4 --activate
+                  corepack prepare yarn@4.12.0 --activate
                   yarn install --immutable
 
     # Resolve versions once to avoid races (parity across platforms)
@@ -315,7 +315,7 @@ jobs:
             - name: Enable Corepack and install dependencies
               run: |
                   corepack enable
-                  corepack prepare yarn@3.6.4 --activate
+                  corepack prepare yarn@4.12.0 --activate
                   yarn install --immutable
 
             - name: Setup JDK
@@ -576,7 +576,7 @@ jobs:
             - name: Enable Corepack and install dependencies
               run: |
                   corepack enable
-                  corepack prepare yarn@3.6.4 --activate
+                  corepack prepare yarn@4.12.0 --activate
                   yarn install --immutable
 
             - name: Configure AWS credentials
@@ -708,6 +708,8 @@ jobs:
             - name: Create Gemfile and install Fastlane + plugins
               run: |
                   set -e
+                  sudo gem update --system 3.2.3
+
                   cat > Gemfile <<'EOF'
                   source "https://rubygems.org"
                   gem "fastlane", "~> 2.228"
