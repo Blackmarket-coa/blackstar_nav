@@ -2,98 +2,130 @@
 
 _Last reviewed: 2026-03-14_
 
-This review summarizes currently visible engineering debt in the Blackstar Navigator repository and proposes practical next steps for the next two sprints.
+This review summarizes engineering debt in the Blackstar Navigator repository and updates next steps using the BMC decision guide (privacy, resilience, censorship resistance) as prioritization criteria.
+
+## Decision guide used for prioritization
+
+For Blackstar, we prioritize debt items that improve:
+
+1. **Cell-based exposure control** (a node/driver should only know what it must know).
+2. **Metadata minimization** (reduce identifiable routing and notification trails).
+3. **Intermittent-connectivity resilience** (batch + burst sync behavior).
+4. **Tamper-evident logistics records** (POD/dispute/audit integrity).
+5. **Cross-system interoperability** with Blackout and FreeBlackMarket patterns when practical.
 
 ## Current debt snapshot
 
-### 1) Testing debt (high)
+### 1) Verification debt for privacy/resilience behaviors (high)
 
-- The project defines `yarn test` and `yarn lint` scripts, but there are currently no test/spec files in `src/`.
-- This means launch-critical flows (auth, order lifecycle, POD, issues, chat) are currently protected mostly by manual validation.
-
-**Impact**
-
-- Higher regression risk on navigation flow, order state transitions, and release hardening.
-- Lower confidence for refactors of contexts/hooks and migration from legacy modules.
-
-### 2) Legacy surface area remains large (high)
-
-- The parity plan explicitly marks the `legacy/` decision as blocking, but no explicit final decision is documented in a release-oriented runbook yet.
-- The codebase still contains a substantial `src/legacy` footprint (old navigation stacks, screens, hooks, and services).
+- Existing scripts include `yarn test` and `yarn lint`, but there are currently no test/spec files in `src/`.
+- Launch-critical flows are mostly manually validated, including order lifecycle and POD.
+- No automated checks currently verify privacy-oriented behaviors (limited data exposure, anonymous signaling patterns, offline sync correctness).
 
 **Impact**
 
-- Split attention between modern and legacy code paths.
-- Higher chance of accidentally shipping old branding/runtime assumptions if guardrails are bypassed.
+- Regression risk in critical workflows and metadata/privacy assumptions.
+- Low confidence when changing navigation, order assignment, or notification logic.
 
-### 3) Platform + branding cleanup is partially deferred (medium)
+### 2) Legacy ambiguity and duplicate surface area (high)
 
-- Branding audit exists and currently passes (`audit:branding`), but this relies on multiple exclusions/allowlists.
-- The parity plan still records pending native renames (e.g., `NavigatorApp`, old package IDs) as explicit workstreams.
-
-**Impact**
-
-- Build/release metadata can drift from final Blackstar naming.
-- Non-source artifacts may still carry historical identifiers.
-
-### 4) Dependency/runtime stability debt (medium)
-
-- React Native and core RN toolchain are pinned to `0.77.0-rc.6` (release candidate).
+- The parity plan marks the `legacy/` decision as blocking, but a final release decision is still not codified in a runbook.
+- A sizable `src/legacy` footprint remains, increasing duplicate implementation and policy drift risk.
 
 **Impact**
 
-- Increased risk of ecosystem incompatibilities and unexpected behavior versus stable RN releases.
+- Harder to enforce a single privacy/security model.
+- Higher chance of accidental shipping of non-hardened legacy behavior.
 
-### 5) Documentation quality drift (low)
+### 3) Metadata exposure model is under-specified (high)
 
-- README has minor formatting artifacts and does not yet provide a concise “production release checklist” linked to parity gates.
+- The app roadmap references feature parity, but there is no explicit implementation checklist for:
+  - cell-based route visibility,
+  - anonymous/pre-acceptance signal handling,
+  - bounded knowledge per logistics node,
+  - delayed/batched signaling to reduce timing leakage.
 
 **Impact**
 
-- Onboarding friction and inconsistent release execution.
+- Design goals exist conceptually, but engineering work can drift into over-sharing topology or actor identity.
+
+### 4) Connectivity hardening debt (medium)
+
+- Current documentation does not define transport-level behavior for intermittent links (e.g., batch + burst order updates in mesh/low-connectivity contexts).
+
+**Impact**
+
+- Operational fragility in rural/unstable network scenarios.
+
+### 5) Auditability debt for dispute/settlement workflows (medium)
+
+- There is no explicit product-level checklist in this repo for tamper-evident POD/dispute events (e.g., hash anchoring or immutable receipt strategy).
+
+**Impact**
+
+- Harder to prove integrity of delivery events across federated participants.
+
+### 6) Platform/tooling debt still present (medium)
+
+- React Native is pinned to `0.77.0-rc.6`.
+- Branding guardrails exist, but rely on scoped exclusions.
+
+**Impact**
+
+- Elevated integration risk and potential release drift.
 
 ## New next steps (prioritized)
 
-## Sprint 1 (stabilize)
+## Sprint 1 (stabilize + policy clarity)
 
-1. **Make a formal legacy decision and codify it**
-   - Choose Option A or B from parity plan and add the decision to README + release runbook.
-   - If Option A, exclude `legacy/` from build/release verification and CI explicitly.
+1. **Finalize and codify the `legacy/` release decision**
+   - Choose Option A or B from parity plan and publish in README + release runbook.
+   - If Option A, enforce CI/build exclusion for `legacy/` artifacts.
 
-2. **Add minimum regression test harness for launch-critical flows**
-   - Start with 6–10 tests around:
-     - auth session bootstrap,
-     - order status transitions,
-     - proof-of-delivery validation,
-     - issue creation/edit,
-     - chat notification routing.
-   - Wire into CI as required checks.
+2. **Add minimum automated regression suite for launch-critical + privacy-critical behaviors**
+   - Initial 8–12 tests covering:
+     - auth bootstrap and instance-link safety,
+     - order lifecycle transitions,
+     - POD completion validation,
+     - issue lifecycle,
+     - notification-to-screen routing,
+     - no unintended full-route/topology leakage in driver-facing payloads.
 
-3. **Convert branding audit to “strict with documented allowlist”**
-   - Keep current script, but move all exclusions into a small tracked allowlist file with ownership and expiry dates.
+3. **Publish a Blackstar “cell visibility contract”**
+   - Document which actors can see which route/order fields before and after acceptance.
+   - Add payload schema assertions (or contract tests) to prevent scope creep.
 
-## Sprint 2 (reduce structural debt)
+4. **Harden signaling model for metadata minimization**
+   - Define bulletin-feed / anonymous pre-acceptance signal behavior for job opportunities.
+   - Add optional batching/jitter strategy for non-urgent sync/notification events to reduce timing correlation.
 
-4. **TypeScript migration pass for high-churn modules**
-   - Prioritize `src/utils/*.js`, context helpers, and frequently edited components.
-   - Add lint rules that prevent new `.js` modules in modern app paths unless justified.
+## Sprint 2 (resilience + integrity)
 
-5. **Native identifier hardening**
-   - Close remaining native naming cleanup tasks from parity plan.
-   - Add a release check that scans packaged artifacts/metadata (not only source files).
+5. **Introduce connectivity-mode spec (online/degraded/offline)**
+   - Add queueing, compression, and burst-sync requirements for intermittent connectivity windows.
+   - Validate idempotent replay behavior for delayed updates.
 
-6. **Dependency hardening plan**
-   - Evaluate upgrade path from `0.77.0-rc.6` to stable RN target.
-   - Run a compatibility spike and capture blockers in a tracked ADR.
+6. **Define tamper-evident receipt strategy for POD/disputes**
+   - Standardize canonical event payload + hash policy.
+   - Record integration plan for settlement/audit systems (on-chain anchoring or equivalent immutable ledger).
+
+7. **TypeScript + lint guardrails for modern paths**
+   - Prioritize migration of high-churn `src/utils/*.js` and context helpers.
+   - Prevent new `.js` files in non-legacy paths unless justified.
+
+8. **Dependency and native-hardening pass**
+   - Plan RN RC-to-stable path with compatibility spike.
+   - Close remaining naming/identifier cleanup from parity plan.
 
 ## Execution model
 
-- **Weekly debt burn-down review:** 30 minutes, track “opened vs closed debt items.”
-- **Definition of done for debt item:**
-  - automated guardrail added, or
-  - documented decision + owner + target release.
+- **Weekly debt review (30 min):** opened vs closed debt items, plus risk trend.
+- **Definition of done for a debt item:**
+  - automated guardrail/test added, or
+  - written policy + owner + release target merged.
 - **Suggested KPIs (30 days):**
-  - >= 10 automated regression tests for critical flows,
+  - >= 10 automated tests for launch/privacy-critical flows,
   - explicit legacy decision merged,
-  - zero undocumented branding allowlist entries,
-  - TS coverage increase in non-legacy app paths.
+  - published cell-visibility contract,
+  - documented degraded/offline burst-sync mode,
+  - zero undocumented branding allowlist entries.
