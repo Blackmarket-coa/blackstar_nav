@@ -14,16 +14,13 @@ For Blackstar, we prioritize debt items that improve:
 4. **Tamper-evident logistics records** (POD/dispute/audit integrity).
 5. **Cross-system interoperability** with Blackout and FreeBlackMarket patterns when practical.
 
-## Immediate decision required
+## Legacy scope decision (resolved)
 
-**Decision to make now:** choose how `legacy/` participates in release.
+**Decision:** `legacy/` is **descoped** from release artifacts and CI for Blackstar launch scope.
 
-- **Option A (recommended):** de-scope `legacy/` from release artifacts and CI.
-- **Option B:** include `legacy/` in release scope and complete full parity + privacy/resilience hardening there.
+**Implementation requirement:** document this in README/release runbook and enforce via CI/build rules so `legacy/` code paths cannot ship unintentionally.
 
-**Why this is the gating decision:** every other debt item (test coverage scope, metadata policies, connectivity hardening, and release guardrails) depends on whether `legacy/` is in or out of the shipped path.
-
-**Decision owner and deadline:** Product + Mobile leads should make this call in the next planning cycle and record it in README/release runbook with an explicit target release.
+**Why this matters:** it unblocks the rest of the debt plan by fixing test scope, policy scope, and release-guardrail scope to the modern app path only.
 
 ## Current debt snapshot
 
@@ -38,15 +35,15 @@ For Blackstar, we prioritize debt items that improve:
 - Regression risk in critical workflows and metadata/privacy assumptions.
 - Low confidence when changing navigation, order assignment, or notification logic.
 
-### 2) Legacy ambiguity and duplicate surface area (high)
+### 2) Legacy isolation and enforcement debt (high)
 
-- The parity plan marks the `legacy/` decision as blocking, but a final release decision is still not codified in a runbook.
-- A sizable `src/legacy` footprint remains, increasing duplicate implementation and policy drift risk.
+- `legacy/` has been descoped, but enforcement/documentation still needs to be completed in README/release runbook and CI/build rules.
+- A sizable `src/legacy` footprint remains in-repo, so accidental inclusion risk remains until guardrails are fully wired.
 
 **Impact**
 
-- Harder to enforce a single privacy/security model.
-- Higher chance of accidental shipping of non-hardened legacy behavior.
+- Without hard guardrails, descoping can drift from policy to intent-only.
+- Release confidence is reduced if legacy isolation is not testable in CI.
 
 ### 3) Metadata exposure model is under-specified (high)
 
@@ -89,9 +86,9 @@ For Blackstar, we prioritize debt items that improve:
 
 ## Sprint 1 (stabilize + policy clarity)
 
-1. **Finalize and codify the `legacy/` release decision**
-   - Choose Option A or B from parity plan and publish in README + release runbook.
-   - If Option A, enforce CI/build exclusion for `legacy/` artifacts.
+1. **Codify and enforce the `legacy/` descoping decision**
+   - Publish the decision in README + release runbook.
+   - Enforce CI/build exclusion for `legacy/` artifacts and fail builds on accidental inclusion.
 
 2. **Add minimum automated regression suite for launch-critical + privacy-critical behaviors**
    - Initial 8–12 tests covering:
@@ -136,7 +133,7 @@ For Blackstar, we prioritize debt items that improve:
   - written policy + owner + release target merged.
 - **Suggested KPIs (30 days):**
   - >= 10 automated tests for launch/privacy-critical flows,
-  - explicit legacy decision merged,
+  - legacy descoping policy documented and CI-enforced,
   - published cell-visibility contract,
   - documented degraded/offline burst-sync mode,
   - zero undocumented branding allowlist entries.
