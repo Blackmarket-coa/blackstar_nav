@@ -22,6 +22,14 @@ For Blackstar, we prioritize debt items that improve:
 
 **Why this matters:** it unblocks the rest of the debt plan by fixing test scope, policy scope, and release-guardrail scope to the modern app path only.
 
+## Backend architecture decision (resolved)
+
+**Decision:** adopt **Path A (Blackstar backend/gateway)** as the target architecture.
+
+**Implementation requirement:** publish an ADR and environment contract for local/dev/staging/prod, then validate auth/orders/issues/fuel/chat end-to-end against the Blackstar gateway contract.
+
+**Why this matters:** it defines the integration boundary early, reduces long-term platform coupling, and keeps Blackstar launch behavior aligned to Blackstar-native runtime configuration.
+
 ## Current debt snapshot
 
 ### 1) Verification debt for privacy/resilience behaviors (high)
@@ -90,7 +98,12 @@ For Blackstar, we prioritize debt items that improve:
    - Publish the decision in README + release runbook.
    - Enforce CI/build exclusion for `legacy/` artifacts and fail builds on accidental inclusion.
 
-2. **Add minimum automated regression suite for launch-critical + privacy-critical behaviors**
+2. **Execute Path A backend alignment plan**
+   - Introduce Blackstar env keys for API/auth/realtime and remove scattered tenant defaults.
+   - Publish ADR + env contract and track contract deltas against current SDK usage.
+   - Complete end-to-end validation for auth/orders/issues/fuel/chat against gateway.
+
+3. **Add minimum automated regression suite for launch-critical + privacy-critical behaviors**
    - Initial 8–12 tests covering:
      - auth bootstrap and instance-link safety,
      - order lifecycle transitions,
@@ -99,29 +112,29 @@ For Blackstar, we prioritize debt items that improve:
      - notification-to-screen routing,
      - no unintended full-route/topology leakage in driver-facing payloads.
 
-3. **Publish a Blackstar “cell visibility contract”**
+4. **Publish a Blackstar “cell visibility contract”**
    - Document which actors can see which route/order fields before and after acceptance.
    - Add payload schema assertions (or contract tests) to prevent scope creep.
 
-4. **Harden signaling model for metadata minimization**
+5. **Harden signaling model for metadata minimization**
    - Define bulletin-feed / anonymous pre-acceptance signal behavior for job opportunities.
    - Add optional batching/jitter strategy for non-urgent sync/notification events to reduce timing correlation.
 
 ## Sprint 2 (resilience + integrity)
 
-5. **Introduce connectivity-mode spec (online/degraded/offline)**
+6. **Introduce connectivity-mode spec (online/degraded/offline)**
    - Add queueing, compression, and burst-sync requirements for intermittent connectivity windows.
    - Validate idempotent replay behavior for delayed updates.
 
-6. **Define tamper-evident receipt strategy for POD/disputes**
+7. **Define tamper-evident receipt strategy for POD/disputes**
    - Standardize canonical event payload + hash policy.
    - Record integration plan for settlement/audit systems (on-chain anchoring or equivalent immutable ledger).
 
-7. **TypeScript + lint guardrails for modern paths**
+8. **TypeScript + lint guardrails for modern paths**
    - Prioritize migration of high-churn `src/utils/*.js` and context helpers.
    - Prevent new `.js` files in non-legacy paths unless justified.
 
-8. **Dependency and native-hardening pass**
+9. **Dependency and native-hardening pass**
    - Plan RN RC-to-stable path with compatibility spike.
    - Close remaining naming/identifier cleanup from parity plan.
 
@@ -134,6 +147,7 @@ For Blackstar, we prioritize debt items that improve:
 - **Suggested KPIs (30 days):**
   - >= 10 automated tests for launch/privacy-critical flows,
   - legacy descoping policy documented and CI-enforced,
+  - backend ADR + environment contract merged for Path A,
   - published cell-visibility contract,
   - documented degraded/offline burst-sync mode,
   - zero undocumented branding allowlist entries.
