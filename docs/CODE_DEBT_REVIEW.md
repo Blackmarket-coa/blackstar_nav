@@ -14,6 +14,17 @@ For Blackstar, we prioritize debt items that improve:
 4. **Tamper-evident logistics records** (POD/dispute/audit integrity).
 5. **Cross-system interoperability** with Blackout and FreeBlackMarket patterns when practical.
 
+## Immediate decision required
+
+**Decision to make now:** choose how `legacy/` participates in release.
+
+- **Option A (recommended):** de-scope `legacy/` from release artifacts and CI.
+- **Option B:** include `legacy/` in release scope and complete full parity + privacy/resilience hardening there.
+
+**Why this is the gating decision:** every other debt item (test coverage scope, metadata policies, connectivity hardening, and release guardrails) depends on whether `legacy/` is in or out of the shipped path.
+
+**Decision owner and deadline:** Product + Mobile leads should make this call in the next planning cycle and record it in README/release runbook with an explicit target release.
+
 ## Current debt snapshot
 
 ### 1) Verification debt for privacy/resilience behaviors (high)
