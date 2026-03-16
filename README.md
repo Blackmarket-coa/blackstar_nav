@@ -116,6 +116,16 @@ The `legacy/` tree and `src/legacy` modules are explicitly out of Blackstar laun
 
 Release operators should use `docs/release-runbook.md` for release boundary checks.
 
+#### How to verify
+
+```bash
+yarn check:legacy-descoped
+yarn check:legacy-descoped:self-test
+```
+
+- `check:legacy-descoped` must pass on clean source.
+- `check:legacy-descoped:self-test` must pass by proving intentional legacy inclusion is detected and rejected.
+
 ### Roadmap
 
 - COMING SOON

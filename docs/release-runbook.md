@@ -42,3 +42,17 @@ For each release candidate, attach:
 - Output of `yarn check:env-contract`
 - Commit hash and tag
 - Owner approval for go/no-go decision
+
+## How to verify
+
+Run both commands before cutting a release candidate:
+
+```bash
+yarn check:legacy-descoped
+yarn check:legacy-descoped:self-test
+```
+
+Expected behavior:
+
+- `yarn check:legacy-descoped` returns `legacy descoping check passed.`
+- `yarn check:legacy-descoped:self-test` returns `Self-test passed: intentional legacy inclusion was detected.`
