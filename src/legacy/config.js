@@ -46,6 +46,8 @@ const normalizePluginConfig = (plugins) => {
  * Third-party plugin configuration can be supplied with
  * BLACKSTAR_PLUGIN_CONFIG_JSON as a JSON object, for example:
  * {"chat":{"enabled":true,"provider":"default"}}
+ * Define your own custom configuration properties below.
+ * Plugin extension point reserved for controlled third-party configuration hooks.
  *
  * @type {object}
  */

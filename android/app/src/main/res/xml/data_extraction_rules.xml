@@ -20,4 +20,5 @@
         <exclude domain="database" path="RKStorage-shm"/>
         <exclude domain="file" path="mmkv"/>
     </device-transfer>
+    -->
 </data-extraction-rules>
