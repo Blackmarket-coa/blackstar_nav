@@ -8,7 +8,7 @@ import InterfaceConfig from '../config/interface';
  * ----------------------------------------------------------
  *
  * Define your own custom configuration properties below.
- * @TODO Allow 3rd party configurations for plugins
+ * Plugin extension point reserved for controlled third-party configuration hooks.
  *
  * @type {object}
  */
