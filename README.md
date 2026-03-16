@@ -106,6 +106,16 @@ See the Blackstar internal documentation and API runbooks for environment-specif
 
 If you contribute to this app, keep feature parity aligned with the Blackstar gateway contracts and release checklist.
 
+### Release scope policy (`legacy/`)
+
+The `legacy/` tree and `src/legacy` modules are explicitly out of Blackstar launch release scope.
+
+- Do not import `legacy/` or `src/legacy` modules from release-scoped app entrypoints and modern runtime paths.
+- Do not include `legacy/` artifacts in CI release packaging jobs.
+- Run `yarn check:legacy-descoped` before release changes and keep it green in CI.
+
+Release operators should use `docs/release-runbook.md` for release boundary checks.
+
 ### Roadmap
 
 - COMING SOON

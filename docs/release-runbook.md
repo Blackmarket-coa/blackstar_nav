@@ -1,0 +1,44 @@
+# Blackstar release runbook
+
+## Scope boundary
+
+Blackstar release artifacts include modern app paths only. The following trees are out of release scope:
+
+- `legacy/`
+- `src/legacy/`
+
+## Pre-release checks
+
+1. Verify descoping guardrail:
+
+   ```bash
+   yarn check:legacy-descoped
+   ```
+
+2. Verify branding guardrail:
+
+   ```bash
+   yarn audit:branding
+   ```
+
+3. Verify environment contract for gateway configuration:
+
+   ```bash
+   yarn check:env-contract
+   ```
+
+## Packaging constraints
+
+- CI workflows and release jobs must not build from `legacy/` entrypoints.
+- Any exception requires a documented release waiver with owner approval and expiration date.
+- If `check:legacy-descoped` fails, release is blocked until violations are removed.
+
+## Release evidence bundle
+
+For each release candidate, attach:
+
+- Output of `yarn check:legacy-descoped`
+- Output of `yarn audit:branding`
+- Output of `yarn check:env-contract`
+- Commit hash and tag
+- Owner approval for go/no-go decision

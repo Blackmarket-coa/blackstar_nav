@@ -146,3 +146,7 @@ Suggested automated guardrail:
   - Newly `present` features
   - Remaining blockers
   - Risk level (low/medium/high) per launch-critical domain
+
+### Tracker linkage
+
+Execution tickets and evidence requirements for this plan are tracked in `docs/release-readiness-tracker.md` (RR-010 and RR-011 plus dependent Sprint tickets).

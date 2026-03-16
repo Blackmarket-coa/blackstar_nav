@@ -163,3 +163,10 @@ Requested follow-on workstreams (Townhall TOWNHALL-04/05/06/07/08/09, composer T
 - target files/modules,
 - evidence requirements (tests/load reports/security sign-off), and
 - owner + release target.
+
+
+## Release-readiness batch execution (2026-03-16)
+
+- Tracker of implementation-ready tickets is now maintained in `docs/release-readiness-tracker.md`.
+- Sprint 1 item #1 (`legacy/` descoping guardrail) was completed with README policy, release runbook, and `check:legacy-descoped` script.
+- Sprint 1 item #2 baseline (Path A ADR + env contract validation script) was completed; staging E2E domain validations remain open under RR-002.
