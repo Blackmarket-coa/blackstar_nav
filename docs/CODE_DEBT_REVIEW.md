@@ -151,3 +151,15 @@ For Blackstar, we prioritize debt items that improve:
   - published cell-visibility contract,
   - documented degraded/offline burst-sync mode,
   - zero undocumented branding allowlist entries.
+
+
+## Backlog sync update (2026-03-16)
+
+A re-baseline marker sweep was completed and inline `TODO`/`FIXME` markers in non-dependency code paths are now at zero.
+
+Requested follow-on workstreams (Townhall TOWNHALL-04/05/06/07/08/09, composer TODO cluster, widget-store consolidation, room-list algorithm debt, and self-healing thin-slice implementation) are not currently represented as concrete code/docs tickets in this repository. To execute and verify them here, add a repository-local tracker (issue index or plan doc) with:
+
+- ticket IDs and acceptance criteria,
+- target files/modules,
+- evidence requirements (tests/load reports/security sign-off), and
+- owner + release target.
