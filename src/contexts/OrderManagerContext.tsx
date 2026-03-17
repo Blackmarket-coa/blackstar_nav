@@ -6,9 +6,17 @@ import { useAuth } from './AuthContext';
 import useFleetbase from '../hooks/use-fleetbase';
 import useStorage from '../hooks/use-storage';
 import { isArray } from '../utils';
+const { sanitizeDriverOrderPayload, assertNoPreAcceptanceLeak } = require('../contracts/cell-visibility.cjs');
 
-function serializeCollection(collection) {
-    return collection.map((resource) => resource.serialize());
+function serializeCollection(collection, options = {}) {
+    return collection.map((resource) => {
+        const serialized = resource.serialize();
+        const sanitized = sanitizeDriverOrderPayload(serialized, options);
+        if (options.enforcePreAcceptance) {
+            assertNoPreAcceptanceLeak(sanitized);
+        }
+        return sanitized;
+    });
 }
 
 function restoreCollection(collection, adapter) {
@@ -155,7 +163,7 @@ export const OrderManagerProvider: React.FC = ({ children }) => {
                     setLoadingFlag ? setIsFetchingNearbyOrders : null
                 );
                 const fetchedOrders = await nearbyOrdersPromiseRef.current;
-                setNearbyOrders(serializeCollection(fetchedOrders));
+                setNearbyOrders(serializeCollection(fetchedOrders, { accepted: false, enforcePreAcceptance: true }));
                 hasLoadedNearbyRef.current = true;
             } catch (error) {
                 console.warn('Unable to load nearby orders for driver:', error);

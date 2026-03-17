@@ -150,3 +150,5 @@ Suggested automated guardrail:
 ### Tracker linkage
 
 Execution tickets and evidence requirements for this plan are tracked in `docs/release-readiness-tracker.md` (RR-010 and RR-011 plus dependent Sprint tickets).
+
+Cell-visibility policy and enforcement reference: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md` (RR-004 baseline).

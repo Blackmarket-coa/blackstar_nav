@@ -9,6 +9,9 @@ Blackstar release artifacts include modern app paths only. The following trees a
 
 ## Pre-release checks
 
+Reference policy: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md`.
+
+
 1. Verify descoping guardrail:
 
    ```bash

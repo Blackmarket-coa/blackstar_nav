@@ -109,6 +109,7 @@ Path A alignment documents in this repository:
 - ADR: `docs/adr/ADR-0001-path-a-blackstar-gateway.md`
 - Environment contract: `docs/environment-contract.md`
 - Release runbook: `docs/release-runbook.md`
+- Cell visibility contract: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md`
 
 If you contribute to this app, keep feature parity aligned with the Blackstar gateway contracts and release checklist.
 
