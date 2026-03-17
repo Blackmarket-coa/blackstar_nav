@@ -88,3 +88,8 @@ When operating in degraded mode:
 - Verify POD/dispute writes include `receipt_metadata` with payload, hash, signature, and signed timestamp.
 - During incident review, recompute verification with stored payload and shared secret; reject records failing verification.
 - Preserve local `tamper_evident_receipts` logs for forensic reconciliation until backend ledger export is complete.
+
+
+## Modern JS guardrail
+
+Run `yarn check:modern-js-guardrail` before release to ensure modern `src/` JavaScript files are tracked and intentionally allowlisted during TypeScript migration.

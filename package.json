@@ -30,7 +30,8 @@
         "check:env-contract": "bash scripts/check-env-contract.sh",
         "check:legacy-descoped:self-test": "bash scripts/check-legacy-descoped.sh --self-test",
         "check:runtime-config": "node scripts/check-runtime-config.js",
-        "test:launch-regression": "node --test __tests__/regression/*.test.cjs"
+        "test:launch-regression": "node --test __tests__/regression/*.test.cjs",
+        "check:modern-js-guardrail": "bash scripts/check-modern-js-guardrail.sh"
     },
     "dependencies": {
         "@babel/core": "^7.25.2",

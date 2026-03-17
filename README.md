@@ -132,12 +132,14 @@ Release operators should use `docs/release-runbook.md` for release boundary chec
 yarn check:legacy-descoped
 yarn check:legacy-descoped:self-test
 yarn check:runtime-config
+yarn check:modern-js-guardrail
 yarn test:launch-regression
 ```
 
 - `check:legacy-descoped` must pass on clean source.
 - `check:legacy-descoped:self-test` must pass by proving intentional legacy inclusion is detected and rejected.
 - `check:runtime-config` must pass to prove startup config loading and validation behavior are intact.
+- `check:modern-js-guardrail` must pass to prevent untracked JavaScript in modern `src/` paths.
 - `test:launch-regression` must pass to verify launch-critical and privacy-critical flow guardrails.
 
 ### Roadmap
@@ -154,3 +156,6 @@ yarn test:launch-regression
 ```
 
 This suite covers auth bootstrap + instance-link safety, order and issue lifecycle transitions, POD validation, notification routing, and payload guardrails against route/topology leakage.
+
+
+For modern TypeScript migration policy and allowlist management, see `docs/TS_MODERN_PATH_GUARDRAILS.md`.
