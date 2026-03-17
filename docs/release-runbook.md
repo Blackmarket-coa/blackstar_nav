@@ -12,6 +12,7 @@ Blackstar release artifacts include modern app paths only. The following trees a
 Reference policy: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md`.
 Signaling policy: `docs/BLACKSTAR_SIGNALING_POLICY.md`.
 Connectivity policy: `docs/BLACKSTAR_CONNECTIVITY_MODE_SPEC.md`.
+Receipt policy: `docs/BLACKSTAR_TAMPER_EVIDENT_RECEIPTS_SPEC.md`.
 
 
 1. Verify descoping guardrail:
@@ -80,3 +81,10 @@ When operating in degraded mode:
 - Tune `BLACKSTAR_SYNC_RETRY_DELAY_MS` to match backend rate limits and expected latency.
 - Use telemetry logs (`[connectivity]`) to monitor enqueue/flush/retry behavior and backlog drain.
 - Never disable idempotency-key generation for queued events; replay safety depends on it.
+
+
+## Tamper-evident receipt operator notes
+
+- Verify POD/dispute writes include `receipt_metadata` with payload, hash, signature, and signed timestamp.
+- During incident review, recompute verification with stored payload and shared secret; reject records failing verification.
+- Preserve local `tamper_evident_receipts` logs for forensic reconciliation until backend ledger export is complete.
