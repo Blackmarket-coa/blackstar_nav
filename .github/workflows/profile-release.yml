@@ -183,6 +183,9 @@ jobs:
                   corepack prepare yarn@4.12.0 --activate
                   yarn install --immutable
 
+            - name: Enforce legacy descoping guardrail
+              run: yarn run check:legacy-descoped
+
     # Resolve versions once to avoid races (parity across platforms)
     resolve-versions:
         runs-on: ubuntu-latest

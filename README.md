@@ -104,8 +104,58 @@ yarn android
 
 See the Blackstar internal documentation and API runbooks for environment-specific setup.
 
+Path A alignment documents in this repository:
+
+- ADR: `docs/adr/ADR-0001-path-a-blackstar-gateway.md`
+- Environment contract: `docs/environment-contract.md`
+- Release runbook: `docs/release-runbook.md`
+- Cell visibility contract: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md`
+- Signaling policy: `docs/BLACKSTAR_SIGNALING_POLICY.md`
+- Connectivity mode spec: `docs/BLACKSTAR_CONNECTIVITY_MODE_SPEC.md`
+- Tamper-evident receipts spec: `docs/BLACKSTAR_TAMPER_EVIDENT_RECEIPTS_SPEC.md`
+
 If you contribute to this app, keep feature parity aligned with the Blackstar gateway contracts and release checklist.
+
+### Release scope policy (`legacy/`)
+
+The `legacy/` tree and `src/legacy` modules are explicitly out of Blackstar launch release scope.
+
+- Do not import `legacy/` or `src/legacy` modules from release-scoped app entrypoints and modern runtime paths.
+- Do not include `legacy/` artifacts in CI release packaging jobs.
+- Run `yarn check:legacy-descoped` before release changes and keep it green in CI.
+
+Release operators should use `docs/release-runbook.md` for release boundary checks.
+
+#### How to verify
+
+```bash
+yarn check:legacy-descoped
+yarn check:legacy-descoped:self-test
+yarn check:runtime-config
+yarn check:modern-js-guardrail
+yarn test:launch-regression
+```
+
+- `check:legacy-descoped` must pass on clean source.
+- `check:legacy-descoped:self-test` must pass by proving intentional legacy inclusion is detected and rejected.
+- `check:runtime-config` must pass to prove startup config loading and validation behavior are intact.
+- `check:modern-js-guardrail` must pass to prevent untracked JavaScript in modern `src/` paths.
+- `test:launch-regression` must pass to verify launch-critical and privacy-critical flow guardrails.
 
 ### Roadmap
 
 - COMING SOON
+
+
+### Launch/privacy regression suite
+
+Run the dedicated launch-critical and privacy-critical regression suite:
+
+```bash
+yarn test:launch-regression
+```
+
+This suite covers auth bootstrap + instance-link safety, order and issue lifecycle transitions, POD validation, notification routing, and payload guardrails against route/topology leakage.
+
+
+For modern TypeScript migration policy and allowlist management, see `docs/TS_MODERN_PATH_GUARDRAILS.md`.

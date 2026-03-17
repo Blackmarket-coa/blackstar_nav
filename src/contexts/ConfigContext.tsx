@@ -1,8 +1,9 @@
-import React, { createContext, useState, useContext, useEffect, useMemo, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useCallback, ReactNode } from 'react';
 import Env from 'react-native-config';
 import Config from '../../navigator.config';
-import { navigatorConfig, config, toBoolean, get } from '../utils';
+import { navigatorConfig, config, get } from '../utils';
 import useStorage from '../hooks/use-storage';
+import { buildRuntimeConfig, assertValidRuntimeConfig } from '../config/runtime';
 
 const ConfigContext = createContext();
 
@@ -64,20 +65,24 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
         setInstanceLinkedSocketSecure(undefined);
     }, [setInstanceLinkedGatewayHost, setInstanceLinkedGatewayKey, setInstanceLinkedSocketHost, setInstanceLinkedSocketPort, setInstanceLinkedSocketSecure]);
 
+    const runtimeConfig = useMemo(() => {
+        const resolved = buildRuntimeConfig(Env, {
+            BLACKSTAR_GATEWAY_HOST: instanceLinkedGatewayHost,
+            BLACKSTAR_GATEWAY_KEY: instanceLinkedGatewayKey,
+            BLACKSTAR_SOCKET_HOST: instanceLinkedSocketHost,
+            BLACKSTAR_SOCKET_PORT: instanceLinkedSocketPort,
+            BLACKSTAR_SOCKET_SECURE: instanceLinkedSocketSecure,
+        });
+
+        assertValidRuntimeConfig(resolved);
+        return resolved;
+    }, [instanceLinkedGatewayHost, instanceLinkedGatewayKey, instanceLinkedSocketHost, instanceLinkedSocketPort, instanceLinkedSocketSecure]);
+
     const resolveConnectionConfig = useCallback(
         (key, defaultValue = null) => {
-            const fullConfig = {
-                BLACKSTAR_GATEWAY_HOST: instanceLinkedGatewayHost ?? config('BLACKSTAR_GATEWAY_HOST', config('FLEETBASE_HOST')),
-                BLACKSTAR_GATEWAY_KEY: instanceLinkedGatewayKey ?? config('BLACKSTAR_GATEWAY_KEY', config('FLEETBASE_KEY')),
-                BLACKSTAR_SOCKET_HOST: instanceLinkedSocketHost ?? config('BLACKSTAR_SOCKET_HOST', config('SOCKETCLUSTER_HOST', 'socket.blackmarket.coa')),
-                BLACKSTAR_SOCKET_PORT: parseInt(instanceLinkedSocketPort ?? config('BLACKSTAR_SOCKET_PORT', config('SOCKETCLUSTER_PORT', '8000'))),
-                BLACKSTAR_SOCKET_SECURE: toBoolean(instanceLinkedSocketSecure ?? config('BLACKSTAR_SOCKET_SECURE', config('SOCKETCLUSTER_SECURE', true))),
-                BLACKSTAR_SOCKET_PATH: config('BLACKSTAR_SOCKET_PATH', config('SOCKETCLUSTER_PATH', '/socketcluster/')),
-            };
-
-            return get(fullConfig, key, defaultValue);
+            return get(runtimeConfig, key, defaultValue);
         },
-        [instanceLinkedGatewayHost, instanceLinkedGatewayKey, instanceLinkedSocketHost, instanceLinkedSocketPort, instanceLinkedSocketSecure]
+        [runtimeConfig]
     );
 
     const value = useMemo(() => {
@@ -86,6 +91,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
             ...Env,
             navigatorConfig,
             config,
+            runtimeConfig,
             instanceLinkConfig: getInstanceLinkConfig(),
             getInstanceLinkConfig,
             resolveConnectionConfig,
@@ -98,6 +104,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
             clearInstanceLinkConfig,
         };
     }, [
+        runtimeConfig,
         getInstanceLinkConfig,
         resolveConnectionConfig,
         setInstanceLinkedGatewayHost,
@@ -107,7 +114,6 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
         setInstanceLinkedSocketSecure,
         setInstanceLinkConfig,
         clearInstanceLinkConfig,
-        // Instance link config values
         instanceLinkedGatewayHost,
         instanceLinkedGatewayKey,
         instanceLinkedSocketHost,

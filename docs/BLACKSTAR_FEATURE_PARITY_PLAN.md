@@ -146,3 +146,12 @@ Suggested automated guardrail:
   - Newly `present` features
   - Remaining blockers
   - Risk level (low/medium/high) per launch-critical domain
+
+### Tracker linkage
+
+Execution tickets and evidence requirements for this plan are tracked in `docs/release-readiness-tracker.md` (RR-010 and RR-011 plus dependent Sprint tickets).
+
+Cell-visibility policy and enforcement reference: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md` (RR-004 baseline).
+Signaling minimization policy reference: `docs/BLACKSTAR_SIGNALING_POLICY.md` (RR-005 thin slice).
+Connectivity mode foundation reference: `docs/BLACKSTAR_CONNECTIVITY_MODE_SPEC.md` (RR-006 baseline).
+Tamper-evident receipts reference: `docs/BLACKSTAR_TAMPER_EVIDENT_RECEIPTS_SPEC.md` (RR-007 baseline).

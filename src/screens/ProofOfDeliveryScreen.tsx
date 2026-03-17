@@ -7,7 +7,9 @@ import { SectionHeader, SectionInfoLine } from '../components/Content';
 import { isNone, resizePhoto } from '../utils';
 import { toast } from '../utils/toast';
 import { useTempStore } from '../contexts/TempStoreContext';
+import { useConfig } from '../contexts/ConfigContext';
 import useDimensions from '../hooks/use-dimensions';
+import { useAuth } from '../contexts/AuthContext';
 import useFleetbase from '../hooks/use-fleetbase';
 import useAppTheme from '../hooks/use-app-theme';
 import QrCodeScanner from '../components/QrCodeScanner';
@@ -16,13 +18,18 @@ import BackButton from '../components/BackButton';
 import CustomHeader from '../components/CustomHeader';
 import LoadingOverlay from '../components/LoadingOverlay';
 import SignatureCanvas from 'react-native-signature-canvas';
+import useStorage from '../hooks/use-storage';
+const { createCanonicalReceiptPayload, createTamperEvidentReceipt } = require('../receipts/tamper-evident-receipts.cjs');
 
 const ProofOfDeliveryScreen = ({ route }) => {
     const theme = useTheme();
     const navigation = useNavigation();
     const { isDarkMode } = useAppTheme();
     const { adapter } = useFleetbase();
+    const { runtimeConfig } = useConfig();
+    const { driver } = useAuth();
     const { setValue } = useTempStore();
+    const [tamperEvidentReceipts, setTamperEvidentReceipts] = useStorage('tamper_evident_receipts', []);
     const { screenWidth, screenHeight } = useDimensions();
     const [isLoading, setIsLoading] = useState(false);
     const [loadingOverlayMessage, setLoadingOverlayMessage] = useState('Capturing Proof of Delivery...');
@@ -35,6 +42,31 @@ const ProofOfDeliveryScreen = ({ route }) => {
     const method = activity.pod_method;
     const isWaypointActivity = waypoint && typeof waypoint.getAttribute('tracking') === 'string' && waypoint.getAttribute('tracking').length;
     const subject = entity ?? (isWaypointActivity ? waypoint : order);
+
+
+    const persistPodReceipt = (proof, extraDetails = {}) => {
+        const payload = createCanonicalReceiptPayload({
+            eventType: 'pod.captured',
+            recordType: 'pod',
+            orderId: order.id,
+            proofId: proof?.id,
+            actorId: driver?.id,
+            details: {
+                method,
+                waypoint_id: waypoint?.id,
+                entity_id: entity?.id,
+                ...extraDetails,
+            },
+        });
+
+        const receipt = createTamperEvidentReceipt({
+            payload,
+            secret: runtimeConfig.BLACKSTAR_GATEWAY_KEY,
+        });
+
+        setTamperEvidentReceipts([...(tamperEvidentReceipts || []), receipt]);
+        return receipt;
+    };
 
     const signatureWebStyle = `.m-signature-pad { box-shadow: none; border: none; }
               .m-signature-pad--body { border: none; }
@@ -49,7 +81,8 @@ const ProofOfDeliveryScreen = ({ route }) => {
 
             try {
                 const proof = await order.captureQrCode(subject, { code: data.value, data, waypoint: waypoint?.id });
-                setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id });
+                const receipt = persistPodReceipt(proof, { qr_value: data.value });
+                setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id, receipt_metadata: receipt });
                 navigation.goBack();
             } catch (err) {
                 toast.error(err.message ?? 'Unable to validate captured QR Code.');
@@ -67,7 +100,8 @@ const ProofOfDeliveryScreen = ({ route }) => {
 
             try {
                 const proof = await order.captureSignature(subject, { signature });
-                setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id });
+                const receipt = persistPodReceipt(proof, { signature_captured: true });
+                setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id, receipt_metadata: receipt });
                 navigation.goBack();
             } catch (err) {
                 toast.error(err.message ?? 'Something went wrong saving the signature.');
@@ -105,7 +139,8 @@ const ProofOfDeliveryScreen = ({ route }) => {
 
             try {
                 const proof = await adapter.post(`orders/${order.id}/capture-photo`, form, { headers: { 'Content-Type': 'multipart/form-data' } });
-                setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id });
+                const receipt = persistPodReceipt(proof, { photo_count: resizedPhotos.length });
+                setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id, receipt_metadata: receipt });
                 navigation.goBack();
             } catch (err) {
                 toast.error(err.message ?? 'Unable to upload captured photos.');
