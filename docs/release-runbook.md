@@ -26,6 +26,7 @@ Blackstar release artifacts include modern app paths only. The following trees a
    ```bash
    yarn check:env-contract
    yarn check:runtime-config
+   yarn test:launch-regression
    ```
 
 ## Packaging constraints
@@ -42,6 +43,7 @@ For each release candidate, attach:
 - Output of `yarn audit:branding`
 - Output of `yarn check:env-contract`
 - Output of `yarn check:runtime-config`
+- Output of `yarn test:launch-regression`
 - Commit hash and tag
 - Owner approval for go/no-go decision
 
@@ -53,6 +55,7 @@ Run both commands before cutting a release candidate:
 yarn check:legacy-descoped
 yarn check:legacy-descoped:self-test
 yarn check:runtime-config
+yarn test:launch-regression
 ```
 
 Expected behavior:
@@ -60,3 +63,4 @@ Expected behavior:
 - `yarn check:legacy-descoped` returns `legacy descoping check passed.`
 - `yarn check:legacy-descoped:self-test` returns `Self-test passed: intentional legacy inclusion was detected.`
 - `yarn check:runtime-config` returns `Runtime config regression checks passed.`
+- `yarn test:launch-regression` returns all launch/privacy regression tests as passing.
