@@ -33,7 +33,7 @@
 			<string>$(APP_IDENTIFIER)</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>$(APP_LINK_PREFIX)</string>
+				<string>$(APP_LINK_SCHEME)</string>
 				<string>fb$(FACEBOOK_APP_ID)</string>
 				<string>$(APP_IDENTIFIER)</string>
 				<string>com.googleusercontent.apps.$(GOOGLE_IOS_CLIENT_ID)</string>
@@ -139,7 +139,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Blackstar needs your location to provide navigation and task management features while you are using the app.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Navigator uses motion data to enhance navigation and track physical activity for improved task management.</string>
+	<string>Blackstar uses motion data to enhance navigation and track physical activity for improved task management.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app allows you to download photos to your photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>

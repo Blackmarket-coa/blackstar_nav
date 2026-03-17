@@ -186,6 +186,12 @@ jobs:
             - name: Enforce legacy descoping guardrail
               run: yarn run check:legacy-descoped
 
+            - name: Enforce branding token guardrail
+              run: yarn run audit:branding
+
+            - name: Enforce release identifier/deep-link guardrail
+              run: yarn run check:release-identifiers
+
     # Resolve versions once to avoid races (parity across platforms)
     resolve-versions:
         runs-on: ubuntu-latest

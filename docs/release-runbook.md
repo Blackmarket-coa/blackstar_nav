@@ -25,6 +25,7 @@ Receipt policy: `docs/BLACKSTAR_TAMPER_EVIDENT_RECEIPTS_SPEC.md`.
 
    ```bash
    yarn audit:branding
+   yarn check:release-identifiers
    ```
 
 3. Verify environment contract for gateway configuration:
@@ -47,6 +48,7 @@ For each release candidate, attach:
 
 - Output of `yarn check:legacy-descoped`
 - Output of `yarn audit:branding`
+- Output of `yarn check:release-identifiers`
 - Output of `yarn check:env-contract`
 - Output of `yarn check:runtime-config`
 - Output of `yarn test:launch-regression`
@@ -61,6 +63,8 @@ Run both commands before cutting a release candidate:
 yarn check:legacy-descoped
 yarn check:legacy-descoped:self-test
 yarn check:runtime-config
+yarn audit:branding
+yarn check:release-identifiers
 yarn test:launch-regression
 ```
 
@@ -69,6 +73,8 @@ Expected behavior:
 - `yarn check:legacy-descoped` returns `legacy descoping check passed.`
 - `yarn check:legacy-descoped:self-test` returns `Self-test passed: intentional legacy inclusion was detected.`
 - `yarn check:runtime-config` returns `Runtime config regression checks passed.`
+- `yarn audit:branding` returns `Branding token check passed.`
+- `yarn check:release-identifiers` returns `Release identifier checks passed.`
 - `yarn test:launch-regression` returns all launch/privacy regression tests as passing.
 
 

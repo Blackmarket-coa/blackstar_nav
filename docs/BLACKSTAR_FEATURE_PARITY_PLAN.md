@@ -126,12 +126,16 @@ Suggested automated guardrail:
 
 ## 7) Definition of done (release gate)
 
-- [ ] No unintended Fleetbase/Navigator naming remains in release code paths.
-- [ ] Android package/app IDs, iOS bundle IDs, and deep links are Blackstar-specific.
-- [ ] Runtime backend/auth/realtime configuration reflects final Blackstar architecture.
-- [ ] Feature matrix shows all `required_for_launch=yes` items as `present`.
-- [ ] Smoke/regression checks pass for shipped platforms.
-- [ ] README and release runbooks match the final architecture and release process.
+- [x] No unintended Fleetbase/Navigator naming remains in release code paths.
+- [x] Android package/app IDs, iOS bundle IDs, and deep links are Blackstar-specific.
+- [x] Runtime backend/auth/realtime configuration reflects final Blackstar architecture.
+- [x] Feature matrix shows all `required_for_launch=yes` items as `present`.
+- [x] Smoke/regression checks pass for shipped platforms.
+- [x] README and release runbooks match the final architecture and release process.
+
+## 8) Release gate evidence
+
+- See `docs/release-gate-evidence.md` for command outputs and file references that back each checked gate item.
 
 ## Suggested owner model
 

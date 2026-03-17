@@ -235,3 +235,9 @@ This tracker converts remaining planning work into implementation-ready reposito
   2. Implementation includes safe retry/backoff and circuit-breaker behavior.
   3. Post-failure replay report demonstrates expected recovery.
 - **Evidence required:** implementation PR refs, reliability test logs, replay report
+
+
+## Current closure status
+
+- RR-010 status: **Complete** — evidence in `docs/release-gate-evidence.md` and `docs/blackstar-feature-matrix.csv`.
+- RR-011 status: **Complete** — evidence in `docs/release-gate-evidence.md`; automated checks in CI via `audit:branding` and `check:release-identifiers`.

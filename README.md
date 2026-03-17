@@ -77,6 +77,7 @@ Your `.env` file should look something like this once you're done.
 APP_NAME=Blackstar Navigator
 APP_IDENTIFIER=com.blackmarket.blackstar
 APP_LINK_PREFIX=blackstar://
+APP_LINK_SCHEME=blackstar
 BLACKSTAR_GATEWAY_HOST=https://api.blackmarket.coa
 BLACKSTAR_GATEWAY_KEY=
 BLACKSTAR_SOCKET_HOST=socket.blackmarket.coa
@@ -133,6 +134,8 @@ yarn check:legacy-descoped
 yarn check:legacy-descoped:self-test
 yarn check:runtime-config
 yarn check:modern-js-guardrail
+yarn audit:branding
+yarn check:release-identifiers
 yarn test:launch-regression
 ```
 
@@ -140,6 +143,8 @@ yarn test:launch-regression
 - `check:legacy-descoped:self-test` must pass by proving intentional legacy inclusion is detected and rejected.
 - `check:runtime-config` must pass to prove startup config loading and validation behavior are intact.
 - `check:modern-js-guardrail` must pass to prevent untracked JavaScript in modern `src/` paths.
+- `audit:branding` must pass to block disallowed legacy branding tokens in release paths.
+- `check:release-identifiers` must pass to enforce Android/iOS package IDs and deep-link scheme policy.
 - `test:launch-regression` must pass to verify launch-critical and privacy-critical flow guardrails.
 
 ### Roadmap
