@@ -171,3 +171,4 @@ Requested follow-on workstreams (Townhall TOWNHALL-04/05/06/07/08/09, composer T
 - Sprint 1 item #1 (`legacy/` descoping guardrail) was completed with README policy, release runbook, and `check:legacy-descoped` script.
 - Sprint 1 item #2 baseline (Path A ADR + env contract validation script) was completed; staging E2E domain validations remain open under RR-002.
 - RR-004 baseline (cell visibility contract doc + enforceable pre-acceptance payload assertions + regression tests) was completed.
+- RR-005 thin slice (anonymous opportunity signals + feature-flagged batching/jitter + telemetry hooks + regression tests) was completed.

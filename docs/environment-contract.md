@@ -17,6 +17,9 @@ Related ADR: `docs/adr/ADR-0001-path-a-blackstar-gateway.md`.
 | `BLACKSTAR_SOCKET_PORT` | yes | `8000` | `8000` | Must parse to integer range `1-65535`. |
 | `BLACKSTAR_SOCKET_SECURE` | yes | `true` | `true` | Must resolve to boolean `true`/`false`. |
 | `BLACKSTAR_SOCKET_PATH` | no | `/socketcluster/` | `/socketcluster/` | Optional; fallback applied when unset. |
+| `BLACKSTAR_SIGNALING_BATCH_ENABLED` | no | `false` | `true` | Enables batching/jitter for non-urgent signaling. |
+| `BLACKSTAR_SIGNALING_BATCH_WINDOW_MS` | no | `15000` | `2500` | Batch window in ms when signaling batching is enabled. |
+| `BLACKSTAR_SIGNALING_JITTER_MS` | no | `3000` | `500` | Adds random jitter (ms) to reduce timing correlation. |
 | `FLEETBASE_HOST` | compatibility fallback | none | `https://api.blackmarket.coa` | Used only as fallback source for `BLACKSTAR_GATEWAY_HOST`. |
 | `FLEETBASE_KEY` | compatibility fallback | none | `fb_...` | Used only as fallback source for `BLACKSTAR_GATEWAY_KEY`. |
 | `SOCKETCLUSTER_HOST` | compatibility fallback | none | `socket.blackmarket.coa` | Used only as fallback source for `BLACKSTAR_SOCKET_HOST`. |
@@ -52,4 +55,4 @@ Startup configuration is validated in `ConfigProvider` using `assertValidRuntime
 
 - Invalid required values throw an error before the app proceeds to network initialization.
 - Error messages include field-specific remediation text so operators can fix `.env` or instance-link configuration quickly.
-- Runtime config resolution precedence is: instance-link overrides → Blackstar env keys → compatibility fallback keys → defaults (socket host/port/secure/path only).
+- Runtime config resolution precedence is: instance-link overrides → Blackstar env keys → compatibility fallback keys → defaults (socket + signaling policy fields).

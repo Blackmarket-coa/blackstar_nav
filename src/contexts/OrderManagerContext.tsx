@@ -7,6 +7,7 @@ import useFleetbase from '../hooks/use-fleetbase';
 import useStorage from '../hooks/use-storage';
 import { isArray } from '../utils';
 const { sanitizeDriverOrderPayload, assertNoPreAcceptanceLeak } = require('../contracts/cell-visibility.cjs');
+const { buildAnonymousOpportunitySignal } = require('../signaling/opportunity-signaling.cjs');
 
 function serializeCollection(collection, options = {}) {
     return collection.map((resource) => {
@@ -299,6 +300,7 @@ export const OrderManagerProvider: React.FC = ({ children }) => {
             ordersToday: restoreCollection(ordersToday, adapter),
             currentOrders: restoreCollection(currentOrders, adapter),
             nearbyOrders: restoreCollection(nearbyOrders, adapter),
+            nearbyOpportunitySignals: nearbyOrders.map((order) => buildAnonymousOpportunitySignal(order)),
             reloadOrders,
             reloadRecentOrders,
             reloadActiveOrders,

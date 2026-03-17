@@ -9,6 +9,7 @@ import { formatDuration, formatMeters } from '../utils/format';
 import { useOrderManager } from '../contexts/OrderManagerContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useConfig } from '../contexts/ConfigContext';
 import InsetShadow from 'react-native-inset-shadow';
 import useSocketClusterClient from '../hooks/use-socket-cluster-client';
 import useAppTheme from '../hooks/use-app-theme';
@@ -18,6 +19,7 @@ import PastOrderCard from '../components/PastOrderCard';
 import AdhocOrderCard from '../components/AdhocOrderCard';
 import Spacer from '../components/Spacer';
 import useStorage from '../hooks/use-storage';
+const { getSignalingPolicy, createSignalingBatcher } = require('../signaling/opportunity-signaling.cjs');
 
 const isAndroid = Platform.OS === 'android';
 
@@ -47,6 +49,7 @@ const DriverOrderManagementScreen = () => {
     const listenerRef = useRef();
     const { isDarkMode } = useAppTheme();
     const { driver } = useAuth();
+    const { runtimeConfig } = useConfig();
     const {
         allActiveOrders,
         currentOrders,
@@ -71,6 +74,27 @@ const DriverOrderManagementScreen = () => {
     const stops = countStops(activeCurrentOrders);
     const distance = sumDistance(activeCurrentOrders);
     const duration = sumDuration(activeCurrentOrders);
+
+    const signalBatcherRef = useRef(null);
+
+    useEffect(() => {
+        const policy = getSignalingPolicy(runtimeConfig);
+
+        signalBatcherRef.current = createSignalingBatcher({
+            policy,
+            onFlush: () => {
+                reloadNearbyOrders({}, { setLoadingFlag: false });
+            },
+            onTelemetry: (event, metadata) => {
+                console.info('[signaling]', event, metadata);
+            },
+        });
+
+        return () => {
+            signalBatcherRef.current?.stop();
+            signalBatcherRef.current = null;
+        };
+    }, [runtimeConfig, reloadNearbyOrders, signalBatcherRef]);
 
     useEffect(() => {
         const handlePushNotification = async (notification, action) => {
@@ -123,7 +147,10 @@ const DriverOrderManagementScreen = () => {
                         reloadCurrentOrders();
                     }
                     if (typeof event === 'string' && event === 'order.ping') {
-                        reloadNearbyOrders();
+                        signalBatcherRef.current?.enqueue({
+                            reason: 'socket.order.ping',
+                            urgency: 'non_urgent',
+                        });
                     }
                 });
                 if (listener) {
