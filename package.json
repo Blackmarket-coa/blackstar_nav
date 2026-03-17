@@ -28,7 +28,8 @@
         "audit:branding": "bash -lc 'if rg -n \"flbnavigator|NavigatorApp|io\\.fleetbase\\.navigator\" src android ios App.tsx index.js index.native.tsx index.web.tsx config navigator.config.ts README.md docs --glob \"!**/build/**\" --glob \"!**/Pods/**\" --glob \"!**/*.bundle\" --glob \"!docs/BLACKSTAR_FEATURE_PARITY_PLAN.md\" --glob \"!ios/NavigatorApp.xcodeproj/**\" --glob \"!ios/NavigatorApp.xcworkspace/**\" --glob \"!ios/NavigatorApp/**\" --glob \"!ios/Header.swift\" --glob \"!android/app/_BUCK\" --glob \"!android/app/src/main/jni/**\" --glob \"!src/legacy/**\"; then echo \"Disallowed branding tokens found\"; exit 1; fi'",
         "check:legacy-descoped": "bash scripts/check-legacy-descoped.sh",
         "check:env-contract": "bash scripts/check-env-contract.sh",
-        "check:legacy-descoped:self-test": "bash scripts/check-legacy-descoped.sh --self-test"
+        "check:legacy-descoped:self-test": "bash scripts/check-legacy-descoped.sh --self-test",
+        "check:runtime-config": "node scripts/check-runtime-config.js"
     },
     "dependencies": {
         "@babel/core": "^7.25.2",

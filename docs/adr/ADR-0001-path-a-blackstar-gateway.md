@@ -46,3 +46,26 @@ If gateway path causes a release blocker:
 1. Freeze feature changes.
 2. Re-enable compatibility adapters behind explicit flags.
 3. Ship only after documented sign-off from product + platform owners.
+
+
+## Architecture boundaries (Path A)
+
+### In scope
+
+- Mobile runtime connectivity for gateway auth/API and realtime socket transport.
+- Environment contract for local/dev/staging/prod and startup validation behavior.
+- Compatibility fallback keys (`FLEETBASE_*`, `SOCKETCLUSTER_*`) only as migration adapters.
+
+### Out of scope
+
+- Full replacement of Fleetbase SDK internals in this sprint.
+- Historical `legacy/` runtime behavior and legacy configuration screens.
+- New business-domain behavior changes (orders/issues/fuel/chat logic) outside config transport.
+
+## Migration assumptions
+
+1. Blackstar keys are canonical and are the only keys allowed for new code paths.
+2. Compatibility keys remain read-only fallbacks during migration and are removed after parity validation.
+3. Instance-link values can override gateway/socket host, key, and transport settings per tenant.
+4. App startup must fail fast when required Path A values are invalid or missing.
+5. Staging E2E sign-off is required before removing compatibility fallbacks.

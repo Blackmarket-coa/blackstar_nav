@@ -104,6 +104,12 @@ yarn android
 
 See the Blackstar internal documentation and API runbooks for environment-specific setup.
 
+Path A alignment documents in this repository:
+
+- ADR: `docs/adr/ADR-0001-path-a-blackstar-gateway.md`
+- Environment contract: `docs/environment-contract.md`
+- Release runbook: `docs/release-runbook.md`
+
 If you contribute to this app, keep feature parity aligned with the Blackstar gateway contracts and release checklist.
 
 ### Release scope policy (`legacy/`)
@@ -121,10 +127,12 @@ Release operators should use `docs/release-runbook.md` for release boundary chec
 ```bash
 yarn check:legacy-descoped
 yarn check:legacy-descoped:self-test
+yarn check:runtime-config
 ```
 
 - `check:legacy-descoped` must pass on clean source.
 - `check:legacy-descoped:self-test` must pass by proving intentional legacy inclusion is detected and rejected.
+- `check:runtime-config` must pass to prove startup config loading and validation behavior are intact.
 
 ### Roadmap
 
