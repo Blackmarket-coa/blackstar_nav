@@ -47,3 +47,11 @@ These are still open based on planning docs, even though inline TODO/FIXME marke
 - Townhall tickets (`TOWNHALL-04` through `TOWNHALL-09`) and self-healing implementation checklists referenced in request are **not represented in this repository's current docs/code** and require a dedicated tracker artifact before execution can be validated here.
 - Composer/widget-store/room-list TODO clusters referenced in request are not present as TODO/FIXME markers in this repository baseline.
 
+
+
+## Release-readiness tracker handoff (2026-03-16)
+
+Execution tracking for non-inline-marker workstreams has been moved to `docs/release-readiness-tracker.md`.
+
+- Completed in this batch: RR-001 and RR-002 baseline artifacts.
+- Remaining Sprint 1/Sprint 2 work stays tracked as RR-* ticket IDs with acceptance criteria and evidence requirements.

@@ -1,0 +1,11 @@
+# Allowlisted legacy branding tokens that remain by necessity.
+# Format: substring expected in rg output line.
+
+# iOS project path still uses historical NavigatorApp container naming.
+ios/NavigatorApp.xcodeproj/project.pbxproj
+
+# iOS target directory naming is still NavigatorApp for native resources.
+ios/NavigatorApp/
+
+# Legacy bridge filename is kept for compatibility with generated native settings.
+ios/Header.swift

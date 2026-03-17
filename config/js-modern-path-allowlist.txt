@@ -1,0 +1,17 @@
+# Temporary allowlist for modern JS files under src/ (outside src/legacy).
+# Each path requires a migration rationale and should be removed once migrated.
+
+# Runtime bootstrap config consumed by env-validation scripts and app startup.
+src/config/runtime.js
+
+# Utility modules pending incremental TypeScript migration.
+src/utils/auth.js
+src/utils/config.js
+src/utils/currencies.js
+src/utils/format.js
+src/utils/index.js
+src/utils/localize.js
+src/utils/location.js
+src/utils/storage.js
+src/utils/tamagui.js
+src/utils/toast.js

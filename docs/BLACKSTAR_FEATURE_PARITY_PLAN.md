@@ -126,12 +126,16 @@ Suggested automated guardrail:
 
 ## 7) Definition of done (release gate)
 
-- [ ] No unintended Fleetbase/Navigator naming remains in release code paths.
-- [ ] Android package/app IDs, iOS bundle IDs, and deep links are Blackstar-specific.
-- [ ] Runtime backend/auth/realtime configuration reflects final Blackstar architecture.
-- [ ] Feature matrix shows all `required_for_launch=yes` items as `present`.
-- [ ] Smoke/regression checks pass for shipped platforms.
-- [ ] README and release runbooks match the final architecture and release process.
+- [x] No unintended Fleetbase/Navigator naming remains in release code paths.
+- [x] Android package/app IDs, iOS bundle IDs, and deep links are Blackstar-specific.
+- [x] Runtime backend/auth/realtime configuration reflects final Blackstar architecture.
+- [x] Feature matrix shows all `required_for_launch=yes` items as `present`.
+- [x] Smoke/regression checks pass for shipped platforms.
+- [x] README and release runbooks match the final architecture and release process.
+
+## 8) Release gate evidence
+
+- See `docs/release-gate-evidence.md` for command outputs and file references that back each checked gate item.
 
 ## Suggested owner model
 
@@ -146,3 +150,12 @@ Suggested automated guardrail:
   - Newly `present` features
   - Remaining blockers
   - Risk level (low/medium/high) per launch-critical domain
+
+### Tracker linkage
+
+Execution tickets and evidence requirements for this plan are tracked in `docs/release-readiness-tracker.md` (RR-010 and RR-011 plus dependent Sprint tickets).
+
+Cell-visibility policy and enforcement reference: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md` (RR-004 baseline).
+Signaling minimization policy reference: `docs/BLACKSTAR_SIGNALING_POLICY.md` (RR-005 thin slice).
+Connectivity mode foundation reference: `docs/BLACKSTAR_CONNECTIVITY_MODE_SPEC.md` (RR-006 baseline).
+Tamper-evident receipts reference: `docs/BLACKSTAR_TAMPER_EVIDENT_RECEIPTS_SPEC.md` (RR-007 baseline).
