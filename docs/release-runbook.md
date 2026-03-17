@@ -11,6 +11,7 @@ Blackstar release artifacts include modern app paths only. The following trees a
 
 Reference policy: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md`.
 Signaling policy: `docs/BLACKSTAR_SIGNALING_POLICY.md`.
+Connectivity policy: `docs/BLACKSTAR_CONNECTIVITY_MODE_SPEC.md`.
 
 
 1. Verify descoping guardrail:
@@ -68,3 +69,14 @@ Expected behavior:
 - `yarn check:legacy-descoped:self-test` returns `Self-test passed: intentional legacy inclusion was detected.`
 - `yarn check:runtime-config` returns `Runtime config regression checks passed.`
 - `yarn test:launch-regression` returns all launch/privacy regression tests as passing.
+
+
+## Degraded mode operator notes
+
+When operating in degraded mode:
+
+- Verify `BLACKSTAR_CONNECTIVITY_MODE=auto` (or explicitly `degraded` for drills).
+- Tune `BLACKSTAR_BURST_SYNC_SIZE` to avoid burst overload during reconnect windows.
+- Tune `BLACKSTAR_SYNC_RETRY_DELAY_MS` to match backend rate limits and expected latency.
+- Use telemetry logs (`[connectivity]`) to monitor enqueue/flush/retry behavior and backlog drain.
+- Never disable idempotency-key generation for queued events; replay safety depends on it.

@@ -20,6 +20,10 @@ Related ADR: `docs/adr/ADR-0001-path-a-blackstar-gateway.md`.
 | `BLACKSTAR_SIGNALING_BATCH_ENABLED` | no | `false` | `true` | Enables batching/jitter for non-urgent signaling. |
 | `BLACKSTAR_SIGNALING_BATCH_WINDOW_MS` | no | `15000` | `2500` | Batch window in ms when signaling batching is enabled. |
 | `BLACKSTAR_SIGNALING_JITTER_MS` | no | `3000` | `500` | Adds random jitter (ms) to reduce timing correlation. |
+| `BLACKSTAR_CONNECTIVITY_MODE` | no | `auto` | `degraded` | Connectivity control mode: `auto`, `online`, `degraded`, `offline`. |
+| `BLACKSTAR_DEGRADED_FAILURE_THRESHOLD` | no | `2` | `3` | Failure count before `auto` mode enters degraded behavior. |
+| `BLACKSTAR_BURST_SYNC_SIZE` | no | `10` | `5` | Max queued updates processed per degraded-mode flush. |
+| `BLACKSTAR_SYNC_RETRY_DELAY_MS` | no | `3000` | `5000` | Delay before retrying queued updates while backlog remains. |
 | `FLEETBASE_HOST` | compatibility fallback | none | `https://api.blackmarket.coa` | Used only as fallback source for `BLACKSTAR_GATEWAY_HOST`. |
 | `FLEETBASE_KEY` | compatibility fallback | none | `fb_...` | Used only as fallback source for `BLACKSTAR_GATEWAY_KEY`. |
 | `SOCKETCLUSTER_HOST` | compatibility fallback | none | `socket.blackmarket.coa` | Used only as fallback source for `BLACKSTAR_SOCKET_HOST`. |

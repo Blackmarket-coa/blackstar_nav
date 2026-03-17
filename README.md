@@ -111,6 +111,7 @@ Path A alignment documents in this repository:
 - Release runbook: `docs/release-runbook.md`
 - Cell visibility contract: `docs/BLACKSTAR_CELL_VISIBILITY_CONTRACT.md`
 - Signaling policy: `docs/BLACKSTAR_SIGNALING_POLICY.md`
+- Connectivity mode spec: `docs/BLACKSTAR_CONNECTIVITY_MODE_SPEC.md`
 
 If you contribute to this app, keep feature parity aligned with the Blackstar gateway contracts and release checklist.
 

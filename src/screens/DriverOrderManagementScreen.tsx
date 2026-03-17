@@ -20,6 +20,7 @@ import AdhocOrderCard from '../components/AdhocOrderCard';
 import Spacer from '../components/Spacer';
 import useStorage from '../hooks/use-storage';
 const { getSignalingPolicy, createSignalingBatcher } = require('../signaling/opportunity-signaling.cjs');
+const { resolveConnectivityPolicy, determineConnectivityMode, createConnectivitySyncQueue } = require('../connectivity/mode-manager.cjs');
 
 const isAndroid = Platform.OS === 'android';
 
@@ -77,13 +78,55 @@ const DriverOrderManagementScreen = () => {
 
     const signalBatcherRef = useRef(null);
 
+    const connectivityQueueRef = useRef(null);
+    const consecutiveSyncFailuresRef = useRef(0);
+
+    useEffect(() => {
+        const policy = resolveConnectivityPolicy(runtimeConfig);
+
+        connectivityQueueRef.current = createConnectivitySyncQueue({
+            policy,
+            getMode: () =>
+                determineConnectivityMode({
+                    policy,
+                    online: true,
+                    consecutiveFailures: consecutiveSyncFailuresRef.current,
+                }),
+            onProcess: (item) => {
+                const action = item.action;
+                const runner = action === 'reload.current' ? reloadCurrentOrders : reloadNearbyOrders;
+
+                Promise.resolve(runner({}, { setLoadingFlag: false }))
+                    .then(() => {
+                        consecutiveSyncFailuresRef.current = 0;
+                    })
+                    .catch(() => {
+                        consecutiveSyncFailuresRef.current += 1;
+                    });
+            },
+            onTelemetry: (event, metadata) => {
+                console.info('[connectivity]', event, metadata);
+            },
+        });
+
+        return () => {
+            connectivityQueueRef.current?.stop();
+            connectivityQueueRef.current = null;
+        };
+    }, [runtimeConfig, reloadCurrentOrders, reloadNearbyOrders]);
+
     useEffect(() => {
         const policy = getSignalingPolicy(runtimeConfig);
 
         signalBatcherRef.current = createSignalingBatcher({
             policy,
             onFlush: () => {
-                reloadNearbyOrders({}, { setLoadingFlag: false });
+                connectivityQueueRef.current?.enqueue({
+                    idempotencyKey: 'signal.batch.nearby.reload',
+                    action: 'reload.nearby',
+                    reason: 'signal.batch.flush',
+                });
+                connectivityQueueRef.current?.flush();
             },
             onTelemetry: (event, metadata) => {
                 console.info('[signaling]', event, metadata);
@@ -94,7 +137,7 @@ const DriverOrderManagementScreen = () => {
             signalBatcherRef.current?.stop();
             signalBatcherRef.current = null;
         };
-    }, [runtimeConfig, reloadNearbyOrders, signalBatcherRef]);
+    }, [runtimeConfig]);
 
     useEffect(() => {
         const handlePushNotification = async (notification, action) => {
@@ -104,7 +147,13 @@ const DriverOrderManagementScreen = () => {
 
             // If any order related push notification comes just reload current orders
             if (typeof id === 'string' && id.startsWith('order_')) {
-                reloadCurrentOrders();
+                const key = `${type || 'order'}.${id}`;
+                connectivityQueueRef.current?.enqueue({
+                    idempotencyKey: key,
+                    action: 'reload.current',
+                    reason: 'notification.order',
+                });
+                connectivityQueueRef.current?.flush();
             }
         };
 
@@ -144,7 +193,12 @@ const DriverOrderManagementScreen = () => {
             const listenForOrderUpdates = async () => {
                 const listener = await listen(`driver.${driver.id}`, ({ event }) => {
                     if (typeof event === 'string' && event === 'order.ready') {
-                        reloadCurrentOrders();
+                        connectivityQueueRef.current?.enqueue({
+                            idempotencyKey: 'socket.order.ready',
+                            action: 'reload.current',
+                            reason: 'socket.order.ready',
+                        });
+                        connectivityQueueRef.current?.flush();
                     }
                     if (typeof event === 'string' && event === 'order.ping') {
                         signalBatcherRef.current?.enqueue({
