@@ -4,24 +4,21 @@ import { useConfig } from '../contexts/ConfigContext';
 import useStorage from './use-storage';
 
 const useFleetbase = () => {
-    const { resolveConnectionConfig } = useConfig();
-    const gatewayKey = resolveConnectionConfig('BLACKSTAR_GATEWAY_KEY');
-    const gatewayHost = resolveConnectionConfig('BLACKSTAR_GATEWAY_HOST');
+    const { runtimeConfig } = useConfig();
+    const gatewayKey = runtimeConfig.BLACKSTAR_GATEWAY_KEY;
+    const gatewayHost = runtimeConfig.BLACKSTAR_GATEWAY_HOST;
 
     const [error, setError] = useState<Error | null>(null);
     const [authToken] = useStorage('_driver_token');
     const [fleetbase, setFleetbase] = useState<Fleetbase | null>(new Fleetbase(authToken ?? gatewayKey, { host: gatewayHost }));
 
     const hasFleetbaseConfig = useCallback(() => {
-        const gatewayKey = resolveConnectionConfig('BLACKSTAR_GATEWAY_KEY');
-        const gatewayHost = resolveConnectionConfig('BLACKSTAR_GATEWAY_HOST');
-
-        return typeof gatewayKey === 'string' && typeof gatewayHost === 'string';
-    }, [resolveConnectionConfig]);
+        return typeof runtimeConfig.BLACKSTAR_GATEWAY_KEY === 'string' && typeof runtimeConfig.BLACKSTAR_GATEWAY_HOST === 'string';
+    }, [runtimeConfig]);
 
     useEffect(() => {
-        const gatewayHost = resolveConnectionConfig('BLACKSTAR_GATEWAY_HOST');
-        const gatewayKey = resolveConnectionConfig('BLACKSTAR_GATEWAY_KEY');
+        const gatewayHost = runtimeConfig.BLACKSTAR_GATEWAY_HOST;
+        const gatewayKey = runtimeConfig.BLACKSTAR_GATEWAY_KEY;
 
         try {
             // If authToken is present, initialize a new Fleetbase instance with it,
@@ -31,7 +28,7 @@ const useFleetbase = () => {
         } catch (initializationError) {
             setError(initializationError as Error);
         }
-    }, [authToken, resolveConnectionConfig]);
+    }, [authToken, runtimeConfig]);
 
     // Memoize the adapter so that its reference only changes when the fleetbase instance updates.
     const adapter = useMemo(() => {

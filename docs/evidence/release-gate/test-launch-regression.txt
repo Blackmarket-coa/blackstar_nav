@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: pre-acceptance driver payload strips forbidden route/topology fields
+ok 1 - pre-acceptance driver payload strips forbidden route/topology fields
+  ---
+  duration_ms: 3.323904
+  type: 'test'
+  ...
+# Subtest: post-acceptance driver payload keeps navigation fields
+ok 2 - post-acceptance driver payload keeps navigation fields
+  ---
+  duration_ms: 0.34179
+  type: 'test'
+  ...
+# Subtest: contract assertion fails when pre-acceptance payload leaks forbidden keys
+ok 3 - contract assertion fails when pre-acceptance payload leaks forbidden keys
+  ---
+  duration_ms: 1.18373
+  type: 'test'
+  ...
+# Subtest: contract assertion passes for compliant pre-acceptance payload
+ok 4 - contract assertion passes for compliant pre-acceptance payload
+  ---
+  duration_ms: 0.500653
+  type: 'test'
+  ...
+# Subtest: connectivity mode resolves to degraded after threshold failures
+ok 5 - connectivity mode resolves to degraded after threshold failures
+  ---
+  duration_ms: 2.385342
+  type: 'test'
+  ...
+# Subtest: offline mode queues updates and flushes when online
+ok 6 - offline mode queues updates and flushes when online
+  ---
+  duration_ms: 1.937641
+  type: 'test'
+  ...
+# Subtest: degraded mode processes burst-size limited updates
+ok 7 - degraded mode processes burst-size limited updates
+  ---
+  duration_ms: 0.72153
+  type: 'test'
+  ...
+# Subtest: idempotency prevents duplicate side effects during replay
+ok 8 - idempotency prevents duplicate side effects during replay
+  ---
+  duration_ms: 0.758581
+  type: 'test'
+  ...
+# Subtest: auth bootstrap succeeds with valid Path A config
+ok 9 - auth bootstrap succeeds with valid Path A config
+  ---
+  duration_ms: 1.837023
+  type: 'test'
+  ...
+# Subtest: instance-link safety rejects insecure host and malformed secure flag
+ok 10 - instance-link safety rejects insecure host and malformed secure flag
+  ---
+  duration_ms: 0.584342
+  type: 'test'
+  ...
+# Subtest: order lifecycle allows created -> assigned via accept
+ok 11 - order lifecycle allows created -> assigned via accept
+  ---
+  duration_ms: 0.318863
+  type: 'test'
+  ...
+# Subtest: order lifecycle rejects invalid transition assigned -> complete_pod
+ok 12 - order lifecycle rejects invalid transition assigned -> complete_pod
+  ---
+  duration_ms: 0.253301
+  type: 'test'
+  ...
+# Subtest: POD validation requires signature for signature mode
+ok 13 - POD validation requires signature for signature mode
+  ---
+  duration_ms: 0.456754
+  type: 'test'
+  ...
+# Subtest: POD validation accepts scan mode with scan code and recipient
+ok 14 - POD validation accepts scan mode with scan code and recipient
+  ---
+  duration_ms: 0.235767
+  type: 'test'
+  ...
+# Subtest: issue lifecycle allows open -> in_progress -> resolved
+ok 15 - issue lifecycle allows open -> in_progress -> resolved
+  ---
+  duration_ms: 0.768104
+  type: 'test'
+  ...
+# Subtest: notification routing maps order notifications to Order screen
+ok 16 - notification routing maps order notifications to Order screen
+  ---
+  duration_ms: 1.432419
+  type: 'test'
+  ...
+# Subtest: notification routing maps issue notifications to Issue screen
+ok 17 - notification routing maps issue notifications to Issue screen
+  ---
+  duration_ms: 0.853248
+  type: 'test'
+  ...
+# Subtest: payload guardrail strips route topology for pre-acceptance payloads
+ok 18 - payload guardrail strips route topology for pre-acceptance payloads
+  ---
+  duration_ms: 1.004185
+  type: 'test'
+  ...
+# Subtest: feature-flag policy defaults to disabled batching
+ok 19 - feature-flag policy defaults to disabled batching
+  ---
+  duration_ms: 3.782482
+  type: 'test'
+  ...
+# Subtest: feature-flag policy parses enabled + custom timing
+ok 20 - feature-flag policy parses enabled + custom timing
+  ---
+  duration_ms: 0.389466
+  type: 'test'
+  ...
+# Subtest: anonymous opportunity signal excludes route/topology payload internals
+ok 21 - anonymous opportunity signal excludes route/topology payload internals
+  ---
+  duration_ms: 1.61377
+  type: 'test'
+  ...
+# Subtest: non-urgent events are batched and flushed once after window+jitter
+ok 22 - non-urgent events are batched and flushed once after window+jitter
+  ---
+  duration_ms: 21.661123
+  type: 'test'
+  ...
+# Subtest: urgent events bypass batching even when feature flag is enabled
+ok 23 - urgent events bypass batching even when feature flag is enabled
+  ---
+  duration_ms: 0.509111
+  type: 'test'
+  ...
+# Subtest: canonical payload serialization is deterministic across key order
+ok 24 - canonical payload serialization is deterministic across key order
+  ---
+  duration_ms: 2.608682
+  type: 'test'
+  ...
+# Subtest: tamper-evident receipt verifies with original payload
+ok 25 - tamper-evident receipt verifies with original payload
+  ---
+  duration_ms: 2.708947
+  type: 'test'
+  ...
+# Subtest: verification fails when canonical payload is mutated after signing
+ok 26 - verification fails when canonical payload is mutated after signing
+  ---
+  duration_ms: 5.275276
+  type: 'test'
+  ...
+# Subtest: verification fails when wrong secret is used
+ok 27 - verification fails when wrong secret is used
+  ---
+  duration_ms: 0.987027
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 808.52849

@@ -50,9 +50,25 @@ jobs:
             - name: Install dependencies
               run: yarn install --immutable
 
+            - name: Enforce legacy descoping guardrail
+              run: yarn run check:legacy-descoped
+
+            - name: Enforce modern JS path guardrail
+              run: yarn run check:modern-js-guardrail
+
+            - name: Enforce branding token guardrail
+              run: yarn run audit:branding
+
+            - name: Enforce release identifier/deep-link guardrail
+              run: yarn run check:release-identifiers
+
+            - name: Run launch/privacy regression suite
+              run: yarn run test:launch-regression
+
             - name: Create .env file
               run: |
                   echo "APP_LINK_PREFIX=${{ secrets.APP_LINK_PREFIX }}" > .env
+                  echo "APP_LINK_SCHEME=$(printf '%s' '${{ secrets.APP_LINK_PREFIX }}' | sed 's#://$##')" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY }}" > .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> .env
@@ -104,6 +120,7 @@ jobs:
             - name: Create .env file
               run: |
                   echo "APP_LINK_PREFIX=${{ secrets.APP_LINK_PREFIX }}" > .env
+                  echo "APP_LINK_SCHEME=$(printf '%s' '${{ secrets.APP_LINK_PREFIX }}' | sed 's#://$##')" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY }}" > .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> .env
@@ -247,6 +264,7 @@ jobs:
             - name: Create .env file
               run: |
                   echo "APP_LINK_PREFIX=${{ secrets.APP_LINK_PREFIX }}" > .env
+                  echo "APP_LINK_SCHEME=$(printf '%s' '${{ secrets.APP_LINK_PREFIX }}' | sed 's#://$##')" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY }}" > .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> .env
@@ -339,6 +357,7 @@ jobs:
             - name: Create .env file
               run: |
                   echo "APP_LINK_PREFIX=${{ secrets.APP_LINK_PREFIX }}" > .env
+                  echo "APP_LINK_SCHEME=$(printf '%s' '${{ secrets.APP_LINK_PREFIX }}' | sed 's#://$##')" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY }}" > .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> .env
@@ -408,6 +427,7 @@ jobs:
             - name: Create .env file
               run: |
                   echo "APP_LINK_PREFIX=${{ secrets.APP_LINK_PREFIX }}" > .env
+                  echo "APP_LINK_SCHEME=$(printf '%s' '${{ secrets.APP_LINK_PREFIX }}' | sed 's#://$##')" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY }}" > .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> .env
